@@ -103,3 +103,36 @@ input[type=range]#monthly-expenses::-moz-range-thumb {
   width: 24px;
 }
 
+/* Additional styles for expenses slider */
+input[type=range]#monthly-expenses-slider::-webkit-slider-thumb {
+  pointer-events: all;
+  width: 24px;
+  height: 24px;
+  -webkit-appearance: none;
+  background-color: #137fec;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+}
+
+.dark input[type=range]#monthly-expenses-slider::-webkit-slider-thumb {
+  border-color: #1e293b;
+}
+
+input[type=range]#monthly-expenses-slider::-moz-range-thumb {
+  pointer-events: all;
+  width: 24px;
+  height: 24px;
+  -webkit-appearance: none;
+  background-color: #137fec;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+}
+
+.dark input[type=range]#monthly-expenses-slider::-moz-range-thumb {
+  border-color: #1e293b;
+}
+

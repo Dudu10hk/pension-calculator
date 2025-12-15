@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import Step1Marketing from '@/components/steps/Step1Marketing'
 import Step2Age from '@/components/steps/Step2Age'
+import Step3RetirementAge from '@/components/steps/Step3RetirementAge'
+import Step4MonthlyIncome from '@/components/steps/Step4MonthlyIncome'
 
 export default function StepPage({
   params,
@@ -18,6 +20,10 @@ export default function StepPage({
       return <Step1Marketing />
     case 2:
       return <Step2Age />
+    case 3:
+      return <Step3RetirementAge />
+    case 4:
+      return <Step4MonthlyIncome />
     default:
       return <div>שלב {stepNumber} - בהכנה</div>
   }

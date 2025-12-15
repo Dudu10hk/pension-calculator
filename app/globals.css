@@ -67,3 +67,39 @@ input[type=range]::-moz-range-thumb {
   border-color: #1e293b;
 }
 
+/* Enhanced slider styles for income/expenses steps */
+input[type=range]#monthly-income::-webkit-slider-runnable-track,
+input[type=range]#monthly-expenses::-webkit-slider-runnable-track {
+  background-color: #cbd5e1;
+  height: 8px;
+}
+
+.dark input[type=range]#monthly-income::-webkit-slider-runnable-track,
+.dark input[type=range]#monthly-expenses::-webkit-slider-runnable-track {
+  background-color: #475569;
+}
+
+input[type=range]#monthly-income::-webkit-slider-thumb,
+input[type=range]#monthly-expenses::-webkit-slider-thumb {
+  height: 24px;
+  width: 24px;
+  margin-top: -8px;
+}
+
+input[type=range]#monthly-income::-moz-range-track,
+input[type=range]#monthly-expenses::-moz-range-track {
+  background-color: #cbd5e1;
+  height: 8px;
+}
+
+.dark input[type=range]#monthly-income::-moz-range-track,
+.dark input[type=range]#monthly-expenses::-moz-range-track {
+  background-color: #475569;
+}
+
+input[type=range]#monthly-income::-moz-range-thumb,
+input[type=range]#monthly-expenses::-moz-range-thumb {
+  height: 24px;
+  width: 24px;
+}
+

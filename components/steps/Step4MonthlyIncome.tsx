@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
 
 export default function Step4MonthlyIncome() {
   const router = useRouter()
   const { data, setData } = useLeadStore()
   const [income, setIncome] = useState<number>(data.monthlyIncome || 15000)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [inputValue, setInputValue] = useState<string>('')
 
   useEffect(() => {
     setData({ monthlyIncome: income })
@@ -25,6 +28,33 @@ export default function Step4MonthlyIncome() {
 
   const handleContinue = () => {
     router.push('/step/5')
+  }
+
+  const handleEditClick = () => {
+    setIsEditing(true)
+    setInputValue(income.toString())
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, '')
+    setInputValue(value)
+  }
+
+  const handleInputBlur = () => {
+    const numValue = parseInt(inputValue) || 5000
+    const clampedValue = Math.max(5000, Math.min(55000, numValue))
+    setIncome(clampedValue)
+    setIsEditing(false)
+  }
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleInputBlur()
+    }
+    if (e.key === 'Escape') {
+      setIsEditing(false)
+      setInputValue('')
+    }
   }
 
   return (
@@ -58,30 +88,64 @@ export default function Step4MonthlyIncome() {
             <div className="flex flex-wrap justify-center text-center gap-3 px-4">
               <div className="flex flex-col gap-3">
                 <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#0d141b] dark:text-white">
-                  מה ההכנסה החודשית שלך?
+                  מה גובה ההכנסה החודשית שלך?
                 </p>
               </div>
             </div>
 
             {/* Income Input */}
             <div className="flex flex-col items-center gap-8 py-8">
-              <div className="w-full max-w-sm px-4">
-                <div className="flex flex-col gap-8">
-                  <div className="flex flex-col gap-4 text-center">
-                    <label
-                      className="text-lg font-semibold text-slate-800 dark:text-slate-200"
-                      htmlFor="monthly-income"
-                    >
-                      הכנסה ברוטו (לפני מס):
-                    </label>
-                    <div className="text-center">
-                      <span className="text-4xl font-bold text-slate-900 dark:text-white">
-                        {formatCurrency(income)}
-                      </span>
+              <div className="w-full max-w-lg px-4">
+                <div className="flex flex-col gap-6 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                  <label
+                    className="text-lg font-bold text-center text-slate-700 dark:text-slate-300"
+                    htmlFor="monthly-income"
+                  >
+                    הכנסה ברוטו (לפני מס):
+                  </label>
+                  <div className="flex flex-col gap-4">
+                    <div className="text-center flex items-center justify-center gap-2">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          onBlur={handleInputBlur}
+                          onKeyDown={handleInputKeyDown}
+                          autoFocus
+                          className="text-4xl font-bold text-slate-900 dark:text-white text-center bg-transparent border-b-2 border-primary focus:outline-none w-48"
+                        />
+                      ) : (
+                        <>
+                          <span className="text-4xl font-bold text-slate-900 dark:text-white">
+                            {formatCurrency(income)}
+                          </span>
+                          <button
+                            onClick={handleEditClick}
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all group"
+                            aria-label="ערוך סכום"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-slate-400 group-hover:text-primary transition-colors"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                              />
+                            </svg>
+                          </button>
+                        </>
+                      )}
                     </div>
-                    <div className="relative pt-4">
+                    <div className="relative w-full h-12 flex items-center">
                       <input
-                        className="w-full"
+                        className="w-full absolute h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-primary"
                         id="monthly-income"
                         max={55000}
                         min={5000}
@@ -90,29 +154,32 @@ export default function Step4MonthlyIncome() {
                         value={income}
                         onChange={(e) => setIncome(parseInt(e.target.value))}
                       />
-                      <div className="flex justify-between text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">
-                        <span>5,000 ₪</span>
-                        <span>55,000 ₪</span>
-                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400 px-1">
+                      <span>5,000 ₪</span>
+                      <span>55,000 ₪</span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-center gap-2 rounded-lg bg-slate-100 p-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                    <span>💡</span>
-                    <span>זה עוזר לנו לחשב כמה תוכל לחסוך מדי חודש</span>
-                  </div>
+                  <p className="text-center text-sm font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 py-2 rounded-lg">
+                    💡 זה עוזר לנו לחשב כמה תוכל לחסוך מדי חודש
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Continue Button */}
             <div className="flex justify-center p-4">
-              <button
+              <motion.button
                 onClick={handleContinue}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
               >
                 <span>המשך</span>
-                <span className="material-symbols-outlined">arrow_back</span>
-              </button>
+                <span className="material-symbols-outlined arrow-animate">
+                  arrow_back
+                </span>
+              </motion.button>
             </div>
           </div>
         </div>

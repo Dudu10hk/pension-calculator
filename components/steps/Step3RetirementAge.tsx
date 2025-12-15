@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
 
 export default function Step3RetirementAge() {
@@ -106,18 +107,20 @@ export default function Step3RetirementAge() {
 
             {/* Continue Button */}
             <div className="flex justify-center p-4 mt-8">
-              <button
+              <motion.button
                 onClick={handleContinue}
                 disabled={!selectedAge}
+                whileHover={selectedAge ? { scale: 1.02 } : {}}
+                whileTap={selectedAge ? { scale: 0.98 } : {}}
                 className={`flex items-center justify-center gap-2 rounded-lg px-8 py-3 text-base font-bold text-white shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark ${
                   selectedAge
                     ? 'bg-primary shadow-primary/30 hover:bg-primary/90'
                     : 'bg-slate-400 cursor-not-allowed'
                 }`}
               >
-                <span>המשך</span>
+                <span>המשך לחישוב הכנסה חודשית</span>
                 <span className="material-symbols-outlined">arrow_back</span>
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>

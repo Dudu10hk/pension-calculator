@@ -1,10 +1,17 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 export default function Step1Marketing() {
   const router = useRouter()
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
 
   const handleContinue = () => {
     router.push('/step/2')
@@ -31,7 +38,7 @@ export default function Step1Marketing() {
                 className="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal hover:text-primary transition-colors"
                 href="/step/2"
               >
-                שלב 2: פרטים אישיים
+                תחילת סימולציה
               </Link>
             </div>
 
@@ -39,7 +46,7 @@ export default function Step1Marketing() {
             <div className="flex flex-col items-center gap-8 py-8">
               <div className="flex flex-col gap-6 text-center px-4">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight tracking-[-0.033em] text-[#0d141b] dark:text-white">
-                  פרישה מוקדמת זה לא חלום! ✨
+                  פרישה מוקדמת זה לא חלום!
                 </h1>
                 <p className="text-xl sm:text-2xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-xl mx-auto">
                   גלו מתי תוכלו לפרוש ולחיות את החיים שאתם רוצים
@@ -48,47 +55,88 @@ export default function Step1Marketing() {
 
               {/* Benefits/Features */}
               <div className="w-full max-w-lg px-4 mt-4">
-                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                  <ul className="space-y-4 text-right">
-                    <li className="flex items-start gap-3">
+                <motion.div
+                  className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                  transition={{ duration: 0.7, delay: 0.3 }}
+                >
+                  <motion.ul
+                    className="space-y-4 text-right"
+                    initial="hidden"
+                    animate={isVisible ? "visible" : "hidden"}
+                    variants={{
+                      hidden: {},
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.25,
+                          delayChildren: 0.4,
+                        },
+                      },
+                    }}
+                  >
+                    <motion.li
+                      className="flex items-start gap-3"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: { opacity: 1, x: 0 },
+                      }}
+                      transition={{ duration: 0.6 }}
+                    >
                       <span className="material-symbols-outlined text-primary text-2xl">
                         check_circle
                       </span>
                       <span className="text-lg text-slate-700 dark:text-slate-300">
                         חישוב מדויק של גיל הפרישה שלכם
                       </span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                    </motion.li>
+                    <motion.li
+                      className="flex items-start gap-3"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: { opacity: 1, x: 0 },
+                      }}
+                      transition={{ duration: 0.6 }}
+                    >
                       <span className="material-symbols-outlined text-primary text-2xl">
                         check_circle
                       </span>
                       <span className="text-lg text-slate-700 dark:text-slate-300">
                         תכנון פיננסי מותאם אישית
                       </span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                    </motion.li>
+                    <motion.li
+                      className="flex items-start gap-3"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: { opacity: 1, x: 0 },
+                      }}
+                      transition={{ duration: 0.6 }}
+                    >
                       <span className="material-symbols-outlined text-primary text-2xl">
                         check_circle
                       </span>
                       <span className="text-lg text-slate-700 dark:text-slate-300">
                         המלצות מקצועיות למימוש החלום
                       </span>
-                    </li>
-                  </ul>
-                </div>
+                    </motion.li>
+                  </motion.ul>
+                </motion.div>
               </div>
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg px-4 mt-4">
-                <button
+                <motion.button
                   onClick={handleContinue}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-4 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
                 >
                   <span>בואו נתחיל</span>
-                  <span className="material-symbols-outlined transform">
+                  <span className="material-symbols-outlined arrow-animate">
                     arrow_back
                   </span>
-                </button>
+                </motion.button>
                 <button
                   onClick={handleSkip}
                   className="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-transparent px-8 py-4 text-lg font-semibold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300/50 focus:ring-offset-2"

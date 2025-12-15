@@ -5,6 +5,7 @@ export interface LeadData {
   retirementAge?: number
   monthlyIncome?: number
   monthlyExpenses?: number
+  currentSavings?: number
   email?: string
   phone?: string
   name?: string

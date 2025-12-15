@@ -1,9 +1,14 @@
+'use client'
+
 import { notFound } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import Step1Marketing from '@/components/steps/Step1Marketing'
 import Step2Age from '@/components/steps/Step2Age'
 import Step3RetirementAge from '@/components/steps/Step3RetirementAge'
 import Step4MonthlyIncome from '@/components/steps/Step4MonthlyIncome'
 import Step5MonthlyExpenses from '@/components/steps/Step5MonthlyExpenses'
+import Step6Savings from '@/components/steps/Step6Savings'
+import StepTransition from '@/components/StepTransition'
 
 export default function StepPage({
   params,
@@ -11,24 +16,35 @@ export default function StepPage({
   params: { stepNumber: string }
 }) {
   const stepNumber = parseInt(params.stepNumber)
+  const pathname = usePathname()
 
-  if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > 6) {
+  if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > 7) {
     notFound()
   }
 
-  switch (stepNumber) {
-    case 1:
-      return <Step1Marketing />
-    case 2:
-      return <Step2Age />
-    case 3:
-      return <Step3RetirementAge />
-    case 4:
-      return <Step4MonthlyIncome />
-    case 5:
-      return <Step5MonthlyExpenses />
-    default:
-      return <div>שלב {stepNumber} - בהכנה</div>
+  const renderStep = () => {
+    switch (stepNumber) {
+      case 1:
+        return <Step1Marketing />
+      case 2:
+        return <Step2Age />
+      case 3:
+        return <Step3RetirementAge />
+      case 4:
+        return <Step4MonthlyIncome />
+      case 5:
+        return <Step5MonthlyExpenses />
+      case 6:
+        return <Step6Savings />
+      default:
+        return <div>שלב {stepNumber} - בהכנה</div>
+    }
   }
+
+  return (
+    <StepTransition stepKey={pathname}>
+      {renderStep()}
+    </StepTransition>
+  )
 }
 

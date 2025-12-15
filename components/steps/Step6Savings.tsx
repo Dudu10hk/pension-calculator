@@ -6,18 +6,18 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
 
-export default function Step5MonthlyExpenses() {
+export default function Step6Savings() {
   const router = useRouter()
   const { data, setData } = useLeadStore()
-  const [expenses, setExpenses] = useState<number>(data.monthlyExpenses || 12000)
+  const [savings, setSavings] = useState<number>(data.currentSavings || 100000)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
   
-  const expenseOptions = [5000, 9000, 16000, 23000, 30000]
+  const savingsOptions = [50000, 100000, 500000, 1000000, 2000000]
 
   useEffect(() => {
-    setData({ monthlyExpenses: expenses })
-  }, [expenses, setData])
+    setData({ currentSavings: savings })
+  }, [savings, setData])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('he-IL', {
@@ -29,12 +29,12 @@ export default function Step5MonthlyExpenses() {
   }
 
   const handleContinue = () => {
-    router.push('/step/6')
+    router.push('/step/7')
   }
 
   const handleEditClick = () => {
     setIsEditing(true)
-    setInputValue(expenses.toString())
+    setInputValue(savings.toString())
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,9 +43,9 @@ export default function Step5MonthlyExpenses() {
   }
 
   const handleInputBlur = () => {
-    const numValue = parseInt(inputValue) || 5000
-    const clampedValue = Math.max(5000, Math.min(30000, numValue))
-    setExpenses(clampedValue)
+    const numValue = parseInt(inputValue) || 10000
+    const clampedValue = Math.max(10000, Math.min(5000000, numValue))
+    setSavings(clampedValue)
     setIsEditing(false)
   }
 
@@ -102,8 +102,17 @@ export default function Step5MonthlyExpenses() {
               <span className="text-slate-400 dark:text-slate-500 text-base font-medium leading-normal">
                 /
               </span>
+              <Link
+                className="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal hover:text-primary transition-colors"
+                href="/step/5"
+              >
+                שלב 5
+              </Link>
+              <span className="text-slate-400 dark:text-slate-500 text-base font-medium leading-normal">
+                /
+              </span>
               <span className="text-primary text-base font-medium leading-normal">
-                שלב 5: רמת חיים
+                שלב 6: חיסכון
               </span>
             </div>
 
@@ -111,20 +120,23 @@ export default function Step5MonthlyExpenses() {
             <div className="flex flex-wrap justify-center text-center gap-3 px-4">
               <div className="flex flex-col gap-3">
                 <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#0d141b] dark:text-white">
-                  כמה אתה מוציא בחודש?
+                  כמה חיסכון צברת עד עכשיו?
+                </p>
+                <p className="text-lg text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-xl mx-auto">
+                  זה עוזר לנו לחשב את נקודת הפתיחה שלכם ולבנות תכנית מותאמת אישית
                 </p>
               </div>
             </div>
 
-            {/* Expenses Input */}
+            {/* Savings Input */}
             <div className="flex flex-col items-center gap-8 py-8">
               <div className="w-full max-w-lg px-4">
                 <div className="flex flex-col gap-6 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
                   <label
                     className="text-lg font-bold text-center text-slate-700 dark:text-slate-300"
-                    htmlFor="monthly-expenses-slider"
+                    htmlFor="savings-slider"
                   >
-                    הוצאות חודשיות ממוצעות:
+                    סכום החיסכון הנוכחי:
                   </label>
                   <div className="flex flex-col gap-4">
                     <div className="text-center flex items-center justify-center gap-2">
@@ -142,9 +154,9 @@ export default function Step5MonthlyExpenses() {
                         <>
                           <span
                             className="text-4xl font-extrabold text-black"
-                            id="expenses-value"
+                            id="savings-value"
                           >
-                            {formatCurrency(expenses)}
+                            {formatCurrency(savings)}
                           </span>
                           <button
                             onClick={handleEditClick}
@@ -172,26 +184,26 @@ export default function Step5MonthlyExpenses() {
                     <div className="relative w-full h-12 flex items-center">
                       <input
                         className="w-full absolute h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-primary"
-                        id="monthly-expenses-slider"
-                        max={30000}
-                        min={5000}
-                        step={1000}
+                        id="savings-slider"
+                        max={5000000}
+                        min={10000}
+                        step={10000}
                         type="range"
-                        value={expenses}
-                        onChange={(e) => setExpenses(parseInt(e.target.value))}
+                        value={savings}
+                        onChange={(e) => setSavings(parseInt(e.target.value))}
                       />
                     </div>
                     <div className="flex justify-between text-xs font-medium px-1">
-                      {expenseOptions.map((value) => (
+                      {savingsOptions.map((value) => (
                         <button
                           key={value}
-                          onClick={() => setExpenses(value)}
-                          className={`px-2 py-1 rounded transition-all ${
-                            expenses === value
+                          onClick={() => setSavings(value)}
+                          className={`px-1 py-1 rounded transition-all whitespace-nowrap flex-shrink-0 ${
+                            savings === value
                               ? 'font-bold bg-primary/10 dark:bg-primary/20'
                               : 'text-slate-400 dark:text-slate-500 hover:text-[#137FEC] hover:font-semibold'
                           }`}
-                          style={expenses === value ? { color: '#137FEC' } : {}}
+                          style={savings === value ? { color: '#137FEC' } : {}}
                         >
                           {formatCurrency(value)}
                         </button>
@@ -199,7 +211,7 @@ export default function Step5MonthlyExpenses() {
                     </div>
                   </div>
                   <p className="text-center text-sm font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 py-2 rounded-lg">
-                    🏠 משכנתא, אוכל, חשבונות, בילויים - הכל ביחד
+                    💰 כולל חסכונות, קופות גמל, קרנות השתלמות וכל נכס פיננסי אחר
                   </p>
                 </div>
               </div>

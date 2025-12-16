@@ -12,6 +12,7 @@ export default function Step4MonthlyIncome() {
   const [income, setIncome] = useState<number>(data.monthlyIncome || 15000)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
+  const [showMoneyAnimation, setShowMoneyAnimation] = useState(false)
 
   useEffect(() => {
     setData({ monthlyIncome: income })
@@ -57,6 +58,12 @@ export default function Step4MonthlyIncome() {
     }
   }
 
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIncome(parseInt(e.target.value))
+    setShowMoneyAnimation(true)
+    setTimeout(() => setShowMoneyAnimation(false), 1000)
+  }
+
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-[#0d141b] dark:text-slate-200">
       <div className="layout-container flex h-full grow flex-col">
@@ -89,6 +96,9 @@ export default function Step4MonthlyIncome() {
               <div className="flex flex-col gap-3">
                 <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#0d141b] dark:text-white">
                   מה גובה ההכנסה החודשית שלך?
+                </p>
+                <p className="text-lg text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-xl mx-auto">
+                  זה עוזר לנו לחשב כמה תוכל לחסוך מדי חודש ולבנות תכנית פיננסית מותאמת אישית
                 </p>
               </div>
             </div>
@@ -152,8 +162,32 @@ export default function Step4MonthlyIncome() {
                         step={500}
                         type="range"
                         value={income}
-                        onChange={(e) => setIncome(parseInt(e.target.value))}
+                        onChange={handleSliderChange}
                       />
+                      {showMoneyAnimation && (
+                        <>
+                          {[0, 1, 2].map((index) => (
+                            <motion.div
+                              key={index}
+                              className="absolute left-1/2 top-0 -translate-x-1/2 pointer-events-none"
+                              initial={{ opacity: 0, y: 10, scale: 0.3, rotate: -10 }}
+                              animate={{
+                                opacity: [0, 1, 1, 0],
+                                y: -40,
+                                scale: [0.3, 1, 1, 0.5],
+                                rotate: [0, 5, -5, 0],
+                              }}
+                              transition={{
+                                duration: 1.2,
+                                delay: index * 0.15,
+                                ease: 'easeOut',
+                              }}
+                            >
+                              <span className="text-2xl">💵</span>
+                            </motion.div>
+                          ))}
+                        </>
+                      )}
                     </div>
                     <div className="flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400 px-1">
                       <span>5,000 ₪</span>

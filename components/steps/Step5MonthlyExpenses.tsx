@@ -211,9 +211,12 @@ export default function Step5MonthlyExpenses() {
                 onClick={handleContinue}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex w-full max-w-sm items-center justify-center gap-3 rounded-lg bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
+                className="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
               >
-                <span>המשך</span>
+                <span>המשך לכמה חסכת וצברת</span>
+                <span className="material-symbols-outlined arrow-animate">
+                  arrow_back
+                </span>
               </motion.button>
             </div>
           </div>

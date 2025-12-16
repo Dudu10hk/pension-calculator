@@ -8,6 +8,7 @@ import Step3RetirementAge from '@/components/steps/Step3RetirementAge'
 import Step4MonthlyIncome from '@/components/steps/Step4MonthlyIncome'
 import Step5MonthlyExpenses from '@/components/steps/Step5MonthlyExpenses'
 import Step6Savings from '@/components/steps/Step6Savings'
+import Step7Results from '@/components/steps/Step7Results'
 import StepTransition from '@/components/StepTransition'
 
 export default function StepPage({
@@ -36,6 +37,8 @@ export default function StepPage({
         return <Step5MonthlyExpenses />
       case 6:
         return <Step6Savings />
+      case 7:
+        return <Step7Results />
       default:
         return <div>שלב {stepNumber} - בהכנה</div>
     }

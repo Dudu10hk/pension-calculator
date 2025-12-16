@@ -12,6 +12,8 @@ export default function Step6Savings() {
   const [savings, setSavings] = useState<number>(data.currentSavings || 100000)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
+  const [includePension, setIncludePension] = useState<boolean>(true)
+  const [showTooltip, setShowTooltip] = useState<boolean>(false)
   
   const savingsOptions = [50000, 100000, 500000, 1000000, 2000000]
 
@@ -216,6 +218,53 @@ export default function Step6Savings() {
                 </div>
               </div>
             </div>
+            
+            {/* Pension Checkbox */}
+            <div className="flex items-center justify-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="pension-checkbox"
+                checked={includePension}
+                onChange={(e) => setIncludePension(e.target.checked)}
+                className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary focus:ring-2"
+              />
+              <label
+                htmlFor="pension-checkbox"
+                className="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer"
+              >
+                מסלקה פנסיונית
+              </label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onMouseEnter={() => setShowTooltip(true)}
+                  onMouseLeave={() => setShowTooltip(false)}
+                  className="text-slate-400 hover:text-primary transition-colors"
+                  aria-label="מידע על מסלקה פנסיונית"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </button>
+                {showTooltip && (
+                  <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-lg z-10">
+                    מסלקה פנסיונית כוללת את כל הכספים שנצברו בקופות גמל, קרנות פנסיה וקרנות השתלמות. סכום זה חשוב לחישוב מדויק של נקודת הפתיחה הפיננסית שלך.
+                    <div className="absolute right-4 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Continue Button */}
             <div className="flex justify-center p-4">
@@ -223,9 +272,12 @@ export default function Step6Savings() {
                 onClick={handleContinue}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex w-full max-w-sm items-center justify-center gap-3 rounded-lg bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
+                className="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
               >
                 <span>המשך</span>
+                <span className="material-symbols-outlined arrow-animate">
+                  arrow_back
+                </span>
               </motion.button>
             </div>
           </div>

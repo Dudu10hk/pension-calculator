@@ -34,10 +34,13 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
 export default function Step7Results() {
   const { data } = useLeadStore()
   const [isVisible, setIsVisible] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    idNumber: '',
+    idIssueDate: '',
   })
 
   useEffect(() => {
@@ -103,8 +106,8 @@ export default function Step7Results() {
   const savingsGap = requiredMonthlySavings - availableMonthlySavings
   const savingsGapPercentage = requiredMonthlySavings > 0 ? (savingsGap / requiredMonthlySavings) * 100 : 0
 
-  // בדיקה אם הטופס מולא
-  const isFormFilled = formData.name.trim() !== '' && formData.email.trim() !== ''
+  // בדיקה אם הטופס נשלח
+  const isFormFilled = isSubmitted
 
   // קביעת סטטוס וטקסט מתאים
   const getStatusInfo = () => {
@@ -147,6 +150,13 @@ export default function Step7Results() {
     e.preventDefault()
     // כאן תהיה שליחה לשרת
     console.log('Form submitted:', formData)
+    setIsSubmitted(true)
+    // שמירה ב-store אם צריך
+    useLeadStore.getState().updateData({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+    })
   }
 
   return (
@@ -257,73 +267,144 @@ export default function Step7Results() {
                   </p>
                 </div>
               </div>
-              <form className="grid md:grid-cols-3 gap-4" onSubmit={handleSubmit}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4, delay: 0.5 }}
-                >
-                  <label className="sr-only" htmlFor="name">
-                    שם מלא
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
-                    id="name"
-                    placeholder="שם מלא"
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4, delay: 0.6 }}
-                >
-                  <label className="sr-only" htmlFor="email">
-                    כתובת אימייל
-                  </label>
-                  <input
-                    className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
-                    id="email"
-                    placeholder="כתובת אימייל"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4, delay: 0.7 }}
-                  className="flex gap-2"
-                >
-                  <input
-                    className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
-                    id="phone"
-                    placeholder="טלפון (אופציונלי)"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
-                  <motion.button
-                    type="submit"
-                    className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark whitespace-nowrap"
+              {!isSubmitted ? (
+                <form className="grid md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
+                  >
+                    <label className="sr-only" htmlFor="name">
+                      שם מלא
+                    </label>
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      id="name"
+                      placeholder="שם מלא"
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.4, delay: 0.6 }}
+                  >
+                    <label className="sr-only" htmlFor="email">
+                      כתובת אימייל
+                    </label>
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      id="email"
+                      placeholder="כתובת אימייל"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.4, delay: 0.7 }}
+                  >
+                    <label className="sr-only" htmlFor="phone">
+                      טלפון נייד
+                    </label>
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      id="phone"
+                      placeholder="טלפון נייד"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ duration: 0.4, delay: 0.8 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                   >
-                    <span>שלח</span>
-                    <span className="material-symbols-outlined arrow-animate text-lg">
-                      arrow_back
-                    </span>
-                  </motion.button>
+                    <label className="sr-only" htmlFor="idNumber">
+                      ת.ז
+                    </label>
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      id="idNumber"
+                      placeholder="תעודת זהות"
+                      type="text"
+                      maxLength={9}
+                      value={formData.idNumber}
+                      onChange={(e) => setFormData({ ...formData, idNumber: e.target.value.replace(/\D/g, '') })}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.4, delay: 0.9 }}
+                  >
+                    <label className="sr-only" htmlFor="idIssueDate">
+                      תאריך הנפקה
+                    </label>
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      id="idIssueDate"
+                      placeholder="תאריך הנפקת ת.ז (DD/MM/YYYY)"
+                      type="text"
+                      value={formData.idIssueDate}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, '')
+                        if (value.length >= 2) value = value.slice(0, 2) + '/' + value.slice(2)
+                        if (value.length >= 5) value = value.slice(0, 5) + '/' + value.slice(5, 9)
+                        setFormData({ ...formData, idIssueDate: value })
+                      }}
+                      maxLength={10}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.4, delay: 1.0 }}
+                    className="md:col-span-2 flex justify-end"
+                  >
+                    <motion.button
+                      type="submit"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark whitespace-nowrap"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span>שלח</span>
+                      <span className="material-symbols-outlined arrow-animate text-lg">
+                        arrow_back
+                      </span>
+                    </motion.button>
+                  </motion.div>
+                </form>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3"
+                >
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 flex items-center justify-center rounded-full shrink-0">
+                    <span className="material-symbols-outlined text-xl">check_circle</span>
+                  </div>
+                  <div>
+                    <p className="text-green-800 dark:text-green-200 font-semibold text-sm">
+                      הפרטים נקלטו בהצלחה!
+                    </p>
+                    <p className="text-green-600 dark:text-green-400 text-xs mt-1">
+                      תוכל/י לראות כעת את כל הניתוח המפורט למטה
+                    </p>
+                  </div>
                 </motion.div>
-              </form>
+              )}
             </motion.div>
 
             {/* Results Card - Bottom Section */}
@@ -344,13 +425,18 @@ export default function Step7Results() {
                 }`}>
                   <span className="material-symbols-outlined text-2xl">{statusInfo.icon}</span>
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white">
                     {statusInfo.title}
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm">
                     {statusInfo.subtitle}
                   </p>
+                  {!isFormFilled && (
+                    <p className="text-slate-600 dark:text-slate-300 text-xs mt-2 font-medium">
+                      התוכנית הבסיסית לפרישה תיפתח באופן מלא לאחר מילוי פרטים בטופס למעלה
+                    </p>
+                  )}
                 </div>
               </div>
               

@@ -175,7 +175,7 @@ export default function Step4MonthlyIncome() {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
               >
-                <span>המשך</span>
+                <span>המשך להוצאות החודשיות</span>
                 <span className="material-symbols-outlined arrow-animate">
                   arrow_back
                 </span>

@@ -26,13 +26,13 @@ export default function Step6Savings() {
 
   const handleContinue = () => {
     setData({ currentSavings: savings })
-    router.push('/step/7')
+    router.push('/step/6') // Updated to new results step
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value.replace(/\D/g, ''))
     if (!isNaN(val)) {
-      setSavings(Math.min(val, 10000000)) // מגבלה הגיונית לחיסכון (10 מיליון)
+      setSavings(Math.min(val, 10000000))
     } else if (e.target.value === '') {
       setSavings(0)
     }
@@ -63,7 +63,7 @@ export default function Step6Savings() {
 
             <div className="space-y-8 text-center">
               <div className="space-y-3">
-                <p className="text-[#E7FE55] bg-[#0d141b] inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mb-2">שלב 5 מתוך 7</p>
+                <p className="text-[#E7FE55] bg-[#0d141b] inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mb-2">שלב 5 מתוך 6</p>
                 <h1 className="text-4xl font-black text-slate-900 tracking-tight">כמה חסכת עד היום?</h1>
                 <p className="text-slate-500 text-sm">סך כל החסכונות (פנסיה, קופות גמל, עו"ש והשקעות)</p>
               </div>

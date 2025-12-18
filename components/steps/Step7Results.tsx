@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
 
@@ -106,14 +107,17 @@ export default function Step7Results() {
     setIdError('')
     setEmailError('')
     let hasError = false
+    
     if (!validateEmail(formData.email)) {
-      setEmailError('כתובת אימייל לא תקינה')
+      setEmailError('כתובת המייל נראית לא תקינה, אנא בדקו שהזנתם אותה נכון (למשל name@example.com)')
       hasError = true
     }
+    
     if (!validateIsraeliID(formData.idNumber)) {
-      setIdError('תעודת זהות לא תקינה')
+      setIdError('מספר תעודת הזהות אינו תקין. וודאו שהזנתם 9 ספרות כולל ספרת ביקורת.')
       hasError = true
     }
+    
     if (!hasError) {
       setIsSubmitted(true)
       useLeadStore.getState().updateData(formData)
@@ -132,6 +136,23 @@ export default function Step7Results() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
             >
+              <div className="flex flex-wrap gap-2 px-4 justify-center mb-4">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <div key={num} className="flex items-center gap-2">
+                    <Link
+                      className="text-slate-400 text-[10px] font-bold hover:text-primary transition-colors uppercase tracking-widest"
+                      href={`/step/${num}`}
+                    >
+                      שלב {num}
+                    </Link>
+                    <span className="text-slate-300 text-[10px]">/</span>
+                  </div>
+                ))}
+                <span className="text-primary text-[10px] font-black uppercase tracking-widest">
+                  תוצאות
+                </span>
+              </div>
+
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/50 rounded-full text-[10px] font-black text-slate-600 mb-2 uppercase tracking-widest">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 הסימולציה הושלמה
@@ -239,40 +260,82 @@ export default function Step7Results() {
 
                   <div className="space-y-6">
                     <div className="text-right">
-                      <h2 className="text-2xl font-black text-slate-900">קבל/י את הדוח המלא</h2>
+                      <h2 className="text-2xl font-black text-[#0d141b]">קבל/י את הדוח המלא</h2>
                       <p className="text-slate-500 text-sm mt-1">השאר/י פרטים וניצור קשר לתיאום שליחת התוכנית</p>
                     </div>
 
                     {!isSubmitted ? (
                       <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-3">
-                          {['name', 'email', 'phone', 'idNumber', 'idIssueDate'].map((field) => (
-                            <div key={field} className="space-y-1">
-                              <input
-                                type={field === 'email' ? 'email' : 'text'}
-                                placeholder={
-                                  field === 'name' ? 'שם מלא' :
-                                  field === 'email' ? 'כתובת אימייל' :
-                                  field === 'phone' ? 'מספר טלפון' :
-                                  field === 'idNumber' ? 'תעודת זהות (9 ספרות)' :
-                                  'תאריך הנפקה (DD/MM/YYYY)'
-                                }
-                                className={`w-full bg-slate-50 border border-slate-100 rounded-xl p-4 text-sm focus:ring-2 focus:ring-[#E7FE55]/30 outline-none transition-all ${
-                                  (field === 'email' && emailError) || (field === 'idNumber' && idError) ? 'border-red-500' : ''
-                                }`}
-                                value={(formData as any)[field]}
-                                onChange={(e) => {
-                                  let val = e.target.value
-                                  if (field === 'idNumber') val = val.replace(/\D/g, '').slice(0, 9)
-                                  if (field === 'idIssueDate') {
-                                    val = val.replace(/\D/g, '')
-                                    if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2)
-                                    if (val.length >= 5) val = val.slice(0, 5) + '/' + val.slice(5, 9)
-                                  }
-                                  setFormData({...formData, [field]: val})
-                                }}
-                                required
-                              />
+                          {[
+                            { id: 'name', label: 'שם מלא', type: 'text' },
+                            { id: 'email', label: 'כתובת אימייל', type: 'email' },
+                            { id: 'phone', label: 'מספר טלפון', type: 'text' },
+                            { id: 'idNumber', label: 'תעודת זהות (9 ספרות)', type: 'text' },
+                            { id: 'idIssueDate', label: 'תאריך הנפקה (DD/MM/YYYY)', type: 'text' }
+                          ].map((field) => (
+                            <div key={field.id} className="space-y-1">
+                              <div className="relative">
+                                <input
+                                  id={field.id}
+                                  type={field.type}
+                                  placeholder={field.label}
+                                  aria-invalid={(field.id === 'email' && !!emailError) || (field.id === 'idNumber' && !!idError)}
+                                  aria-describedby={field.id + "-error"}
+                                  className={`w-full bg-slate-50 border rounded-xl p-4 text-sm focus:ring-2 outline-none transition-all ${
+                                    (field.id === 'email' && emailError) || (field.id === 'idNumber' && idError) 
+                                      ? 'border-red-300 focus:ring-red-100' 
+                                      : 'border-slate-100 focus:ring-[#E7FE55]/30'
+                                  }`}
+                                  value={(formData as any)[field.id]}
+                                  onChange={(e) => {
+                                    let val = e.target.value
+                                    if (field.id === 'idNumber') val = val.replace(/\D/g, '').slice(0, 9)
+                                    if (field.id === 'idIssueDate') {
+                                      val = val.replace(/\D/g, '')
+                                      if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2)
+                                      if (val.length >= 5) val = val.slice(0, 5) + '/' + val.slice(5, 9)
+                                    }
+                                    setFormData({...formData, [field.id]: val})
+                                    // Clear errors on change
+                                    if (field.id === 'email') setEmailError('')
+                                    if (field.id === 'idNumber') setIdError('')
+                                  }}
+                                  required
+                                />
+                                {((field.id === 'email' && emailError) || (field.id === 'idNumber' && idError)) && (
+                                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500">
+                                    <span className="material-symbols-outlined text-sm">error</span>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              <AnimatePresence mode="wait">
+                                {field.id === 'email' && emailError && (
+                                  <motion.p
+                                    id="email-error"
+                                    role="alert"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
+                                  >
+                                    {emailError}
+                                  </motion.p>
+                                )}
+                                {field.id === 'idNumber' && idError && (
+                                  <motion.p
+                                    id="idNumber-error"
+                                    role="alert"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
+                                  >
+                                    {idError}
+                                  </motion.p>
+                                )}
+                              </AnimatePresence>
                             </div>
                           ))}
                         </div>

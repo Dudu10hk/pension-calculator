@@ -1,22 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
 
 export default function Step3RetirementAge() {
   const router = useRouter()
   const { data, setData } = useLeadStore()
-  const [selectedAge, setSelectedAge] = useState<number | null>(
-    data.retirementAge || null
-  )
+  const [selectedAge, setSelectedAge] = useState<number | null>(data.retirementAge || null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
 
   const retirementOptions = [
-    { age: 50, label: 'חלום אמיתי 🌴', description: 'חלום אמיתי 🌴' },
-    { age: 55, label: 'שאפתני 🎯', description: 'שאפתני 🎯' },
-    { age: 60, label: 'ריאליסטי ⚡️', description: 'ריאליסטי ⚡️' },
+    { age: 55, label: 'חלום 🌴', description: 'פרישה מוקדמת מאוד' },
+    { age: 60, label: 'שאפתני 🎯', description: 'לפני הגיל הממוצע' },
+    { age: 67, label: 'ריאליסטי ⚡️', description: 'גיל הפרישה הרשמי' },
   ]
 
   const handleAgeSelect = (age: number) => {
@@ -31,125 +33,63 @@ export default function Step3RetirementAge() {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-[#0d141b] dark:text-slate-200">
+    <div className="relative flex min-h-screen w-full flex-col bg-[#DDDDDD] font-display text-[#0d141b] overflow-x-hidden">
       <div className="layout-container flex h-full grow flex-col">
-        <div className="px-4 py-10 sm:px-8 md:px-16 lg:px-24 xl:px-40 flex flex-1 justify-center items-center">
-          <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1 gap-8">
-            {/* Breadcrumb */}
-            <div className="flex flex-wrap gap-2 px-4 justify-center">
-              <Link
-                className="text-primary text-base font-medium leading-normal hover:underline"
-                href="/step/2"
-              >
-                שלב 1: יעדים
-              </Link>
-              <span className="text-slate-400 dark:text-slate-500 text-base font-medium leading-normal">
-                /
-              </span>
-              <span className="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal">
-                שלב 2: אסטרטגיה
-              </span>
-              <span className="text-slate-400 dark:text-slate-500 text-base font-medium leading-normal">
-                /
-              </span>
-              <span className="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal">
-                שלב 3: סימולציה
-              </span>
+        <div className="px-4 py-12 sm:px-8 md:px-16 lg:px-24 xl:px-40 flex flex-1 justify-center items-center">
+          <motion.div 
+            className="w-full max-w-2xl bg-white rounded-[32px] shadow-2xl p-10 border border-white relative overflow-hidden"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+          >
+            <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
+              <div className="bg-[#E7FE55] h-full w-[28%] transition-all duration-500"></div>
             </div>
 
-            {/* Title */}
-            <div className="flex flex-wrap justify-center text-center gap-3 px-4">
-              <div className="flex flex-col gap-3">
-                <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#0d141b] dark:text-white">
-                  באיזה גיל תרצה/י לפרוש?
-                </p>
-                <p className="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">
-                  זוהי אחת ההחלטות החשובות ביותר בתכנון הפרישה שלך.
-                </p>
+            <div className="space-y-8 text-center">
+              <div className="space-y-3">
+                <p className="text-[#E7FE55] bg-[#0d141b] inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mb-2">שלב 2 מתוך 7</p>
+                <h1 className="text-4xl font-black text-slate-900 tracking-tight">באיזה גיל תרצה לפרוש?</h1>
+                <p className="text-slate-500 text-sm">המטרה שלך קובעת את אסטרטגיית החיסכון הנדרשת</p>
               </div>
-            </div>
 
-            {/* Age Options */}
-            <div className="flex flex-col items-center gap-6 py-8">
-              {/* Microcopy Helper Text */}
-              <motion.div
-                className="text-center px-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                  💡 <span className="text-primary font-semibold">טיפ:</span> בחר/י את הגיל שמתאים לך - אפשר תמיד לשנות בהמשך!
-                </p>
-              </motion.div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl px-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-8">
                 {retirementOptions.map((option) => (
                   <button
                     key={option.age}
                     onClick={() => handleAgeSelect(option.age)}
-                    className={`relative flex flex-col items-center justify-center text-center p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-primary/30 ${
+                    className={`relative flex flex-col items-center justify-center p-8 rounded-2xl transition-all duration-300 ${
                       selectedAge === option.age
-                        ? 'border-2 border-primary ring-4 ring-primary/20'
-                        : 'border-2 border-transparent'
+                        ? 'bg-[#0d141b] text-white shadow-2xl scale-105'
+                        : 'bg-slate-50 text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    {selectedAge === option.age && (
-                      <motion.div
-                        className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-md"
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      >
-                        <span className="material-symbols-outlined text-white text-sm">
-                          check
-                        </span>
-                      </motion.div>
-                    )}
-                    <span
-                      className={`text-5xl font-extrabold ${
-                        selectedAge === option.age
-                          ? 'text-primary'
-                          : 'text-slate-800 dark:text-white'
-                      }`}
-                    >
-                      {option.age}
+                    <span className="text-4xl font-black mb-1">{option.age}</span>
+                    <span className={`text-xs font-bold uppercase tracking-widest ${selectedAge === option.age ? 'text-[#E7FE55]' : 'text-primary'}`}>
+                      {option.label}
                     </span>
-                    <span
-                      className={`text-lg mt-1 ${
-                        selectedAge === option.age
-                          ? 'text-primary/80 dark:text-primary/90'
-                          : 'text-slate-500 dark:text-slate-400'
-                      }`}
-                    >
-                      {option.description}
-                    </span>
+                    <p className={`text-[10px] mt-2 opacity-60`}>{option.description}</p>
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Continue Button */}
-            <div className="flex justify-center p-4 mt-8">
               <motion.button
                 onClick={handleContinue}
                 disabled={!selectedAge}
                 whileHover={selectedAge ? { scale: 1.02 } : {}}
                 whileTap={selectedAge ? { scale: 0.98 } : {}}
-                className={`flex items-center justify-center gap-2 rounded-lg px-8 py-3 text-base font-bold text-white shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark ${
-                  selectedAge
-                    ? 'bg-primary shadow-primary/30 hover:bg-primary/90'
-                    : 'bg-slate-400 cursor-not-allowed'
+                className={`w-full font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 group ${
+                  selectedAge 
+                    ? 'bg-[#0d141b] text-white hover:bg-slate-800' 
+                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >
-                <span>המשך לחישוב הכנסה חודשית</span>
-                <span className="material-symbols-outlined">arrow_back</span>
+                <span>המשך לשלב הבא</span>
+                <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
               </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
   )
 }
-

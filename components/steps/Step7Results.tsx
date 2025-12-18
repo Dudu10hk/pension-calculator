@@ -37,6 +37,7 @@ export default function Step7Results() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
   const [idError, setIdError] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -76,6 +77,35 @@ export default function Step7Results() {
 
     // הסכום חייב להתחלק ב-10
     return sum % 10 === 0
+  }
+
+  // פונקציית ולידציה לאימייל
+  const validateEmail = (email: string): boolean => {
+    // Regex מקיף לבדיקת אימייל תקין
+    const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/
+    
+    // בדיקות נוספות
+    if (!emailRegex.test(email)) {
+      return false
+    }
+
+    // בדיקת אורך סביר
+    if (email.length > 254) {
+      return false
+    }
+
+    // בדיקת החלק המקומי (לפני ה-@)
+    const [localPart, domain] = email.split('@')
+    if (localPart.length > 64) {
+      return false
+    }
+
+    // בדיקה שאין נקודות כפולות
+    if (email.includes('..')) {
+      return false
+    }
+
+    return true
   }
 
   useEffect(() => {
@@ -184,20 +214,35 @@ export default function Step7Results() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
+    // איפוס כל השגיאות
+    setIdError('')
+    setEmailError('')
+    
+    let hasError = false
+
+    // בדיקת אימייל
+    if (!formData.email) {
+      setEmailError('אנא הזן כתובת אימייל')
+      hasError = true
+    } else if (!validateEmail(formData.email)) {
+      setEmailError('כתובת אימייל לא תקינה')
+      hasError = true
+    }
+
     // Validation: צריך גם ת.ז וגם תאריך הנפקה
     if (!formData.idNumber || !formData.idIssueDate) {
       setIdError('אנא הזן ת.ז ותאריך הנפקה')
-      return
-    }
-
-    // בדיקת תקינות ת.ז
-    if (!validateIsraeliID(formData.idNumber)) {
+      hasError = true
+    } else if (!validateIsraeliID(formData.idNumber)) {
+      // בדיקת תקינות ת.ז
       setIdError('תעודת זהות לא תקינה. אנא בדוק את המספר שהזנת')
-      return
+      hasError = true
     }
 
-    // איפוס שגיאות
-    setIdError('')
+    // אם יש שגיאות, עצור
+    if (hasError) {
+      return
+    }
     
     // כאן תהיה שליחה לשרת
     console.log('Form submitted:', formData)
@@ -411,14 +456,33 @@ export default function Step7Results() {
                       כתובת אימייל
                     </label>
                     <input
-                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      className={`w-full rounded-lg border ${
+                        emailError && formData.email
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                          : 'border-slate-300 dark:border-slate-600 focus:border-primary focus:ring-primary/20'
+                      } dark:bg-slate-700 dark:text-white focus:ring-2 text-sm py-2.5 px-4`}
                       id="email"
-                      placeholder="כתובת אימייל"
+                      placeholder="כתובת אימייל (example@domain.com)"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value.trim() })
+                        // איפוס שגיאה בזמן הקלדה
+                        if (emailError) setEmailError('')
+                      }}
+                      onBlur={() => {
+                        // בדיקת ולידציה כשעוזבים את השדה
+                        if (formData.email && !validateEmail(formData.email)) {
+                          setEmailError('כתובת אימייל לא תקינה')
+                        }
+                      }}
                       required
                     />
+                    {emailError && (
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                        {emailError}
+                      </p>
+                    )}
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

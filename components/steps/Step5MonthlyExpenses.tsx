@@ -1,23 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { useLeadStore } from '@/lib/store'
 
 export default function Step5MonthlyExpenses() {
   const router = useRouter()
-  const { data, setData } = useLeadStore()
-  const [expenses, setExpenses] = useState<number>(data.monthlyExpenses || 12000)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [inputValue, setInputValue] = useState<string>('')
-  
-  const expenseOptions = [5000, 9000, 16000, 23000, 30000]
 
   useEffect(() => {
-    setData({ monthlyExpenses: expenses })
-  }, [expenses, setData])
+    // Redirect to step 4 since it now includes both income and expenses
+    router.replace('/step/4')
+  }, [router])
+
+  return null
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('he-IL', {

@@ -1,12 +1,8 @@
 import type { Metadata } from 'next'
-import { Manrope } from 'next/font/google'
 import './globals.css'
 
-const manrope = Manrope({
-  subsets: ['latin'],
-  weight: ['400', '500', '700', '800'],
-  variable: '--font-manrope',
-})
+// Removed Manrope font import to avoid SSL certificate issues
+// Using system fonts instead
 
 export const metadata: Metadata = {
   title: 'תכנון פרישה מוקדמת',
@@ -26,7 +22,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${manrope.variable} font-display`}>{children}</body>
+      <body className="font-display">{children}</body>
     </html>
   )
 }

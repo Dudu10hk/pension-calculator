@@ -15,7 +15,7 @@ const config: Config = {
         'background-dark': '#101922',
       },
       fontFamily: {
-        display: ['var(--font-manrope)', 'Manrope', 'sans-serif'],
+        display: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '0.25rem',

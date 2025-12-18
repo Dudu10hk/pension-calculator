@@ -1,7 +1,7 @@
 'use client'
 
 import { notFound } from 'next/navigation'
-import { usePathname } from 'next/navigation'
+import { usePathname, useParams } from 'next/navigation'
 import Step1Marketing from '@/components/steps/Step1Marketing'
 import Step2Age from '@/components/steps/Step2Age'
 import Step3RetirementAge from '@/components/steps/Step3RetirementAge'
@@ -11,12 +11,9 @@ import Step6Savings from '@/components/steps/Step6Savings'
 import Step7Results from '@/components/steps/Step7Results'
 import StepTransition from '@/components/StepTransition'
 
-export default function StepPage({
-  params,
-}: {
-  params: { stepNumber: string }
-}) {
-  const stepNumber = parseInt(params.stepNumber)
+export default function StepPage() {
+  const params = useParams()
+  const stepNumber = parseInt(params.stepNumber as string)
   const pathname = usePathname()
 
   if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > 7) {

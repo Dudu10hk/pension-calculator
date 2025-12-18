@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +18,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'כתובת אימייל לא תקינה' },
         { status: 400 }
+      )
+    }
+
+    // If Supabase is not configured, return success without saving
+    if (!isSupabaseConfigured) {
+      console.warn('Supabase not configured - running in demo mode')
+      return NextResponse.json(
+        { 
+          success: true, 
+          lead: { 
+            id: 'demo-' + Date.now(),
+            ...body,
+            demo: true 
+          } 
+        },
+        { status: 201 }
       )
     }
 
@@ -63,6 +79,12 @@ export async function POST(request: NextRequest) {
 // Optional: GET endpoint to retrieve leads (for admin purposes)
 export async function GET(request: NextRequest) {
   try {
+    // If Supabase is not configured, return empty array
+    if (!isSupabaseConfigured) {
+      console.warn('Supabase not configured - running in demo mode')
+      return NextResponse.json({ leads: [], demo: true }, { status: 200 })
+    }
+
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '100')
     const offset = parseInt(searchParams.get('offset') || '0')

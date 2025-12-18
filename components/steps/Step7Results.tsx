@@ -35,6 +35,7 @@ export default function Step7Results() {
   const { data } = useLeadStore()
   const [isVisible, setIsVisible] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -148,6 +149,11 @@ export default function Step7Results() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    // Validation: צריך גם ת.ז וגם תאריך הנפקה
+    if (!formData.idNumber || !formData.idIssueDate) {
+      alert('אנא הזן ת.ז ותאריך הנפקה')
+      return
+    }
     // כאן תהיה שליחה לשרת
     console.log('Form submitted:', formData)
     setIsSubmitted(true)
@@ -258,17 +264,81 @@ export default function Step7Results() {
                 <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center rounded-full shrink-0">
                   <span className="material-symbols-outlined text-2xl">assignment_turned_in</span>
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white leading-tight">
                     קבל/י את תוכנית הפרישה המלאה שלך
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
                     השאר/י פרטים כדי לקבל ניתוח מפורט ומדויק
                   </p>
+                  {/* Progress Indicator */}
+                  {(() => {
+                    const filledFields = [
+                      formData.name,
+                      formData.email,
+                      formData.phone,
+                      formData.idNumber,
+                      formData.idIssueDate
+                    ].filter(Boolean).length
+                    const totalFields = 5
+                    const progress = (filledFields / totalFields) * 100
+                    return (
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs text-slate-600 dark:text-slate-400">התקדמות מילוי הטופס</span>
+                          <span className="text-xs font-semibold text-primary">{filledFields}/{totalFields}</span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                          <motion.div
+                            className="bg-primary h-2 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ duration: 0.5 }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })()}
                 </div>
+                <button
+                  onClick={() => setShowPreviewModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg transition-colors border border-primary/20"
+                  type="button"
+                >
+                  <span className="material-symbols-outlined text-lg">preview</span>
+                  <span>תראה מה תקבל</span>
+                </button>
               </div>
+
               {!isSubmitted ? (
-                <form className="grid md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+                <>
+                  {/* Benefit Highlights */}
+                  <div className="mb-4 p-4 bg-gradient-to-r from-primary/5 to-blue-50 dark:from-primary/10 dark:to-blue-900/20 rounded-lg border border-primary/20">
+                    <div className="flex items-start gap-3">
+                      <span className="material-symbols-outlined text-primary text-2xl">stars</span>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-white mb-1">
+                          למה כדאי לך להשאיר פרטים עכשיו?
+                        </h4>
+                        <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1">
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-500">✓</span>
+                            <span>דוח מותאם אישית - חינם וללא התחייבות</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-500">✓</span>
+                            <span>תוכנית פעולה מעשית - צעדים ברורים למימוש החלום</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-500">✓</span>
+                            <span>ללא עלות נסתרת - הכל שקוף וברור מראש</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <form className="grid md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -370,21 +440,139 @@ export default function Step7Results() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ duration: 0.4, delay: 1.0 }}
-                    className="md:col-span-2 flex justify-end"
+                    className="md:col-span-2"
                   >
-                    <motion.button
-                      type="submit"
-                      className="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark whitespace-nowrap"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <span>שלח</span>
-                      <span className="material-symbols-outlined arrow-animate text-lg">
-                        arrow_back
-                      </span>
-                    </motion.button>
+                    {/* Trust Indicators */}
+                    <div className="flex flex-wrap items-center justify-center gap-4 mb-4 p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg">
+                      <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                        <span className="material-symbols-outlined text-green-500 text-base">verified</span>
+                        <span>אבטחה מלאה</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                        <span className="material-symbols-outlined text-blue-500 text-base">lock</span>
+                        <span>פרטיות מובטחת</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                        <span className="material-symbols-outlined text-purple-500 text-base">groups</span>
+                        <span>יותר מ-5,000 לקוחות מרוצים</span>
+                      </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <div className="flex flex-col items-center gap-3">
+                      <motion.button
+                        type="submit"
+                        className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span>קבל/י את התוכנית המלאה עכשיו</span>
+                        <span className="material-symbols-outlined arrow-animate text-lg">
+                          arrow_back
+                        </span>
+                      </motion.button>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                        ⚡ תקבל/י את הדוח המלא תוך דקות ספורות
+                      </p>
+                    </div>
                   </motion.div>
-                </form>
+                  </form>
+
+                  {/* Animated Arrow & Preview Section */}
+                  <motion.div
+                    className="flex flex-col items-center gap-4 mt-6"
+                    initial={{ opacity: 0 }}
+                    animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.6, delay: 1.2 }}
+                  >
+                    {/* Animated Arrow */}
+                    <motion.div
+                      animate={{
+                        y: [0, 10, 0],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="flex flex-col items-center gap-2"
+                    >
+                      <span className="text-primary text-4xl">↓</span>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        ברגע שתשאיר/י פרטים, נפתחים הנתונים המלאים:
+                      </p>
+                    </motion.div>
+
+                    {/* Preview Cards - What Will Unlock */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-4">
+                      <motion.div
+                        className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800/30"
+                        initial={{ opacity: 0.5, scale: 0.95 }}
+                        animate={{ opacity: 0.7, scale: 1 }}
+                        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">analytics</span>
+                          <h4 className="text-sm font-bold text-slate-800 dark:text-white">דוח פיננסי מפורט</h4>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          ניתוח מדויק של מצבך הפיננסי עם המלצות מותאמות
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800/30"
+                        initial={{ opacity: 0.5, scale: 0.95 }}
+                        animate={{ opacity: 0.7, scale: 1 }}
+                        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", delay: 0.3 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="material-symbols-outlined text-green-600 dark:text-green-400">route</span>
+                          <h4 className="text-sm font-bold text-slate-800 dark:text-white">תוכנית פעולה</h4>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          צעדים מעשיים למימוש החלום - שלב אחר שלב
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800/30"
+                        initial={{ opacity: 0.5, scale: 0.95 }}
+                        animate={{ opacity: 0.7, scale: 1 }}
+                        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", delay: 0.6 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="material-symbols-outlined text-purple-600 dark:text-purple-400">support_agent</span>
+                          <h4 className="text-sm font-bold text-slate-800 dark:text-white">ליווי מקצועי</h4>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          מעקב שוטף והתאמה אישית של התוכנית שלך
+                        </p>
+                      </motion.div>
+                    </div>
+
+                    {/* Social Proof & Urgency */}
+                    <div className="flex flex-wrap items-center justify-center gap-6 mt-4 p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg w-full">
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          {[1, 2, 3, 4].map((i) => (
+                            <div
+                              key={i}
+                              className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border-2 border-white dark:border-slate-800"
+                            />
+                          ))}
+                        </div>
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          +5,247 כבר קיבלו את התוכנית שלהם
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
+                        <span className="material-symbols-outlined text-lg animate-pulse">schedule</span>
+                        <span className="text-sm font-medium">הצטרף עכשיו - מקומות מוגבלים</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -452,7 +640,7 @@ export default function Step7Results() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600 dark:text-slate-300">קצבה חודשית צפויה:</span>
-                  <span className={`font-bold text-2xl ${isOnTrack ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                  <span className="font-bold text-2xl text-slate-800 dark:text-slate-200">
                     {formatCurrency(Math.max(0, expectedMonthlyPension))}
                   </span>
                 </div>
@@ -507,6 +695,218 @@ export default function Step7Results() {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowPreviewModal(false)}>
+          <motion.div
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                תראה מה תקבל בסוף התהליך
+              </h2>
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                type="button"
+              >
+                <span className="material-symbols-outlined text-slate-600 dark:text-slate-300">close</span>
+              </button>
+            </div>
+
+            {/* Modal Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="max-w-5xl mx-auto space-y-6">
+                {/* Progress Section */}
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex gap-6 justify-between items-end">
+                      <p className="text-slate-700 dark:text-slate-200 text-sm font-bold">השלמת התהליך</p>
+                      <p className="text-primary text-xl font-bold">100%</p>
+                    </div>
+                    <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+                      <div className="bg-primary h-3 rounded-full transition-all duration-1000 ease-out" style={{ width: '100%' }}></div>
+                    </div>
+                    <p className="text-slate-400 dark:text-slate-500 text-xs text-left">התוכנית המלאה מוכנה!</p>
+                  </div>
+                </div>
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col justify-between gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="flex items-start justify-between">
+                      <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-primary">
+                        <span className="material-symbols-outlined">savings</span>
+                      </div>
+                      <span className="text-green-600 dark:text-green-400 text-sm font-bold bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded flex items-center gap-1">
+                        <span className="material-symbols-outlined text-sm">arrow_upward</span> 12%
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">פוטנציאל חיסכון בפרישה</p>
+                      <p className="text-slate-900 dark:text-white text-3xl font-bold tracking-tight">₪150,000</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-between gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="flex items-start justify-between">
+                      <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                        <span className="material-symbols-outlined">event_available</span>
+                      </div>
+                      <span className="text-slate-400 dark:text-slate-500 text-sm font-medium">יעד מקורי: 67</span>
+                    </div>
+                    <div>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">גיל פרישה יעד מעודכן</p>
+                      <p className="text-slate-900 dark:text-white text-3xl font-bold tracking-tight">62</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-between gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="flex items-start justify-between">
+                      <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg text-orange-600 dark:text-orange-400">
+                        <span className="material-symbols-outlined">monitor_heart</span>
+                      </div>
+                      <span className="text-green-600 dark:text-green-400 text-sm font-bold bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded flex items-center gap-1">
+                        +2 נקודות
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">ציון בריאות פנסיוני</p>
+                      <p className="text-slate-900 dark:text-white text-3xl font-bold tracking-tight">7/10</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timeline */}
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary">route</span>
+                    מסע הפרישה שלך
+                  </h3>
+                  <div className="grid grid-cols-[32px_1fr] gap-x-4">
+                    <div className="flex flex-col items-center gap-1 pt-1">
+                      <div className="text-green-500 bg-green-100 dark:bg-green-900/30 rounded-full p-0.5">
+                        <span className="material-symbols-outlined text-[20px] block">check_circle</span>
+                      </div>
+                      <div className="w-[2px] bg-green-200 dark:bg-green-900 h-full min-h-[40px]"></div>
+                    </div>
+                    <div className="flex flex-col pb-6 pt-0.5">
+                      <p className="text-slate-900 dark:text-white text-base font-bold leading-tight">נתונים אישיים</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">הושלם בהצלחה</p>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 pt-1">
+                      <div className="text-green-500 bg-green-100 dark:bg-green-900/30 rounded-full p-0.5">
+                        <span className="material-symbols-outlined text-[20px] block">check_circle</span>
+                      </div>
+                      <div className="w-[2px] bg-green-200 dark:bg-green-900 h-full min-h-[40px]"></div>
+                    </div>
+                    <div className="flex flex-col pb-6 pt-0.5">
+                      <p className="text-slate-900 dark:text-white text-base font-bold leading-tight">בדיקת דמי ניהול</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">נמצאו חריגות שטופלו</p>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 pt-1">
+                      <div className="text-green-500 bg-green-100 dark:bg-green-900/30 rounded-full p-0.5">
+                        <span className="material-symbols-outlined text-[20px] block">check_circle</span>
+                      </div>
+                      <div className="w-[2px] bg-green-200 dark:bg-green-900 h-full min-h-[40px]"></div>
+                    </div>
+                    <div className="flex flex-col pb-6 pt-0.5">
+                      <p className="text-slate-900 dark:text-white text-base font-bold leading-tight">תכנון מס</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">הושלם בהצלחה</p>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 pt-1">
+                      <div className="text-green-500 bg-green-100 dark:bg-green-900/30 rounded-full p-0.5">
+                        <span className="material-symbols-outlined text-[20px] block">check_circle</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col pt-0.5">
+                      <p className="text-slate-900 dark:text-white text-base font-bold leading-tight">סיכום והמלצות</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">מוכן לך!</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">סיכום סטטוס</h3>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center justify-between p-3 border rounded-lg border-slate-100 dark:border-slate-700">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-full text-primary">
+                            <span className="material-symbols-outlined text-xl">account_balance_wallet</span>
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">צבירה נוכחית</p>
+                            <p className="font-bold text-slate-900 dark:text-white">₪450,200</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-3 border rounded-lg border-slate-100 dark:border-slate-700">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-full text-green-500">
+                            <span className="material-symbols-outlined text-xl">trending_up</span>
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">חיסכון פוטנציאלי</p>
+                            <p className="font-bold text-slate-900 dark:text-white">+₪150,000</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">היעדים שלך</h3>
+                    <ul className="flex flex-col gap-3">
+                      <li className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                        <div className="text-green-500 mt-0.5">
+                          <span className="material-symbols-outlined text-lg">check_box</span>
+                        </div>
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">פרישה מוקדמת בגיל 62</span>
+                      </li>
+                      <li className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                        <div className="text-green-500 mt-0.5">
+                          <span className="material-symbols-outlined text-lg">check_box</span>
+                        </div>
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">שיפור דמי ניהול</span>
+                      </li>
+                      <li className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                        <div className="text-green-500 mt-0.5">
+                          <span className="material-symbols-outlined text-lg">check_box</span>
+                        </div>
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">תכנון מס מיטבי</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-end gap-4 p-6 border-t border-slate-200 dark:border-slate-700">
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="px-6 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                type="button"
+              >
+                סגור
+              </button>
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="px-6 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors shadow-lg shadow-primary/30"
+                type="button"
+              >
+                הבנתי, המשך
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

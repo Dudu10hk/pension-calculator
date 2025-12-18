@@ -70,18 +70,42 @@ export default function Step3RetirementAge() {
             </div>
 
             {/* Age Options */}
-            <div className="flex flex-col items-center gap-8 py-8">
+            <div className="flex flex-col items-center gap-6 py-8">
+              {/* Microcopy Helper Text */}
+              <motion.div
+                className="text-center px-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                  💡 <span className="text-primary font-semibold">טיפ:</span> בחר/י את הגיל שמתאים לך - אפשר תמיד לשנות בהמשך!
+                </p>
+              </motion.div>
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl px-4">
                 {retirementOptions.map((option) => (
                   <button
                     key={option.age}
                     onClick={() => handleAgeSelect(option.age)}
-                    className={`flex flex-col items-center justify-center text-center p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-primary/30 ${
+                    className={`relative flex flex-col items-center justify-center text-center p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-primary/30 ${
                       selectedAge === option.age
                         ? 'border-2 border-primary ring-4 ring-primary/20'
                         : 'border-2 border-transparent'
                     }`}
                   >
+                    {selectedAge === option.age && (
+                      <motion.div
+                        className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-md"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
+                        <span className="material-symbols-outlined text-white text-sm">
+                          check
+                        </span>
+                      </motion.div>
+                    )}
                     <span
                       className={`text-5xl font-extrabold ${
                         selectedAge === option.age

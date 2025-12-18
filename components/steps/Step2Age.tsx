@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
 
 export default function Step2Age() {
@@ -10,14 +10,32 @@ export default function Step2Age() {
   const { data, setData } = useLeadStore()
   const [age, setAge] = useState<number>(data.currentAge || 35)
   const [isVisible, setIsVisible] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setIsVisible(true)
   }, [])
 
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [isEditing])
+
   const handleContinue = () => {
     setData({ currentAge: age })
     router.push('/step/3')
+  }
+
+  const handleAgeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value)
+    if (!isNaN(val) && val >= 1 && val <= 120) {
+      setAge(val)
+    } else if (e.target.value === '') {
+      setAge(0)
+    }
   }
 
   return (
@@ -41,22 +59,61 @@ export default function Step2Age() {
               </div>
 
               <div className="py-12 flex flex-col items-center gap-8">
-                <div className="relative">
-                  <span className="text-8xl font-black text-slate-900 tabular-nums">{age}</span>
-                  <span className="absolute -top-2 -right-12 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">שנים</span>
+                <div className="relative group cursor-pointer" onClick={() => !isEditing && setIsEditing(true)}>
+                  <AnimatePresence mode="wait">
+                    {!isEditing ? (
+                      <motion.div
+                        key="display"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="flex items-center justify-center gap-4"
+                      >
+                        <span className="text-8xl font-black text-slate-900 tabular-nums leading-none">{age || 0}</span>
+                        <div className="flex flex-col items-start">
+                          <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold mb-2 transition-transform group-hover:scale-110">שנים</span>
+                          <span className="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">edit</span>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="edit"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="relative"
+                      >
+                        <input
+                          ref={inputRef}
+                          type="number"
+                          value={age || ''}
+                          onChange={handleAgeInputChange}
+                          onBlur={() => setIsEditing(false)}
+                          onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
+                          className="text-8xl font-black text-slate-900 tabular-nums leading-none w-48 text-center bg-slate-50 rounded-2xl border-2 border-primary/20 outline-none focus:border-primary/50 transition-all"
+                          min="1"
+                          max="120"
+                        />
+                        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs font-bold text-primary animate-pulse">
+                          <span className="material-symbols-outlined text-sm">check_circle</span>
+                          <span>לחץ Enter לסיום</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <div className="w-full space-y-4">
+                <div className={`w-full space-y-4 transition-opacity duration-300 ${isEditing ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
                   <input
                     type="range"
                     min="18"
                     max="80"
                     step="1"
-                    value={age}
+                    value={age || 18}
                     onChange={(e) => setAge(parseInt(e.target.value))}
                     className="w-full h-3 bg-slate-100 rounded-full appearance-none cursor-pointer accent-[#E7FE55]"
                     style={{
-                      background: `linear-gradient(to left, #E7FE55 0%, #E7FE55 ${((age - 18) / (80 - 18)) * 100}%, #f1f5f9 ${((age - 18) / (80 - 18)) * 100}%, #f1f5f9 100%)`
+                      background: `linear-gradient(to left, #E7FE55 0%, #E7FE55 ${(((age || 18) - 18) / (80 - 18)) * 100}%, #f1f5f9 ${(((age || 18) - 18) / (80 - 18)) * 100}%, #f1f5f9 100%)`
                     }}
                   />
                   <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">

@@ -2,8 +2,37 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useLeadStore } from '@/lib/store'
+
+// קומפוננט טולטיפ יוקרתי
+function StatTooltip({ text, children }: { text: string; children: React.ReactNode }) {
+  const [isHovered, setIsHovered] = useState(false)
+  
+  return (
+    <div className="relative inline-block w-full" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      {children}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 p-4 bg-[#0d141b] text-white text-[11px] leading-relaxed rounded-2xl shadow-2xl z-50 text-right border border-white/10 backdrop-blur-md"
+          >
+            <div className="relative z-10 font-medium">
+              <span className="text-[#E7FE55] font-black block mb-1">מידע חשוב:</span>
+              {text}
+            </div>
+            {/* Triangle Arrow */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-x-[8px] border-x-transparent border-t-[8px] border-t-[#0d141b]"></div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default function Step7Results() {
   const { data } = useLeadStore()
@@ -131,56 +160,62 @@ export default function Step7Results() {
                           <circle
                             cx="128"
                             cy="128"
-                            r="84"
+                            r="88"
                             fill="transparent"
-                            stroke="#f1f5f9"
-                            strokeWidth="16"
+                            stroke="#f8fafc"
+                            strokeWidth="8"
                           />
                           {/* Progress Circle */}
                           <motion.circle
                             cx="128"
                             cy="128"
-                            r="84"
+                            r="88"
                             fill="transparent"
-                            stroke={isOnTrack ? '#22c55e' : '#fb923c'}
-                            strokeWidth="16"
-                            strokeDasharray={strokeDasharray}
-                            initial={{ strokeDashoffset: strokeDasharray }}
-                            animate={{ strokeDashoffset: strokeDashoffset }}
-                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+                            stroke={isOnTrack ? '#10b981' : '#6366f1'}
+                            strokeWidth="8"
+                            strokeDasharray={2 * Math.PI * 88}
+                            initial={{ strokeDashoffset: 2 * Math.PI * 88 }}
+                            animate={{ strokeDashoffset: 2 * Math.PI * 88 * (1 - confidenceScore / 100) }}
+                            transition={{ duration: 2, ease: [0.4, 0, 0.2, 1], delay: 0.5 }}
                             strokeLinecap="round"
                           />
                         </svg>
                         
                         <div className="text-center z-10">
-                          <motion.span 
-                            className="block text-6xl font-black text-slate-900 tabular-nums"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1 }}
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.2 }}
                           >
-                            {confidenceScore}%
-                          </motion.span>
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ביטחון פנסיוני</span>
+                            <span className="block text-5xl font-black text-slate-900 tabular-nums tracking-tighter">
+                              {confidenceScore}%
+                            </span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] block mt-1 mr-1">
+                              ביטחון פנסיוני
+                            </span>
+                          </motion.div>
                         </div>
                       </div>
 
-                      <div className="mt-8 text-center space-y-2">
-                        <h3 className={`text-2xl font-black ${isOnTrack ? 'text-green-600' : 'text-orange-600'}`}>
-                          {isOnTrack ? 'אתה במסלול הנכון!' : 'נדרשת אופטימיזציה'}
+                      <div className="mt-10 text-center space-y-2">
+                        <h3 className={`text-xl font-black tracking-tight ${isOnTrack ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                          {isOnTrack ? 'המסלול שלך בטוח' : 'פוטנציאל לשיפור משמעותי'}
                         </h3>
-                        <p className="text-slate-500 font-medium">
-                          הון משוער בפרישה: <span className="font-black text-slate-900">{formatCurrency(expectedCapital)}</span>
-                        </p>
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-50 rounded-full border border-slate-100">
+                          <span className="text-[11px] font-bold text-slate-500">הון משוער בפרישה:</span>
+                          <span className="text-sm font-black text-slate-900">{formatCurrency(expectedCapital)}</span>
+                        </div>
                       </div>
                     </div>
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-6 pt-6 border-t border-slate-50">
-                      <div className="p-6 bg-slate-50 rounded-2xl text-center">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">גיל פרישה</p>
-                        <p className="text-3xl font-black text-slate-900">{retirementAge}</p>
-                      </div>
+                      <StatTooltip text="גיל הפרישה בישראל הוא 67 לגברים ו־65 לנשים. גם אם בוחרים לפרוש מוקדם יותר, נכון לבסס יציבות כלכלית מבלי למשוך את כספי הפנסיה.">
+                        <div className="p-6 bg-slate-50 rounded-2xl text-center cursor-help transition-colors hover:bg-slate-100 group">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">גיל פרישה</p>
+                          <p className="text-3xl font-black text-slate-900">{retirementAge}</p>
+                        </div>
+                      </StatTooltip>
                       <div className="p-6 bg-slate-50 rounded-2xl text-center">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">קצבה חודשית</p>
                         <p className="text-3xl font-black text-slate-900">{formatCurrency(expectedMonthlyPension)}</p>

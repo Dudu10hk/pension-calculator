@@ -36,6 +36,7 @@ export default function Step7Results() {
   const [isVisible, setIsVisible] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const [idError, setIdError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,6 +44,39 @@ export default function Step7Results() {
     idNumber: '',
     idIssueDate: '',
   })
+
+  // פונקציית ולידציה לתעודת זהות ישראלית
+  const validateIsraeliID = (id: string): boolean => {
+    // בדיקת אורך
+    if (id.length !== 9) {
+      return false
+    }
+
+    // בדיקת ספרות בלבד
+    if (!/^\d+$/.test(id)) {
+      return false
+    }
+
+    // אלגוריתם לון (Luhn algorithm) לבדיקת ת.ז ישראלית
+    let sum = 0
+    for (let i = 0; i < 9; i++) {
+      let digit = parseInt(id[i])
+      // כפל הספרות במיקומים אי-זוגיים ב-2
+      if (i % 2 === 0) {
+        digit *= 1
+      } else {
+        digit *= 2
+        // אם התוצאה גדולה מ-9, חבר את הספרות
+        if (digit > 9) {
+          digit = Math.floor(digit / 10) + (digit % 10)
+        }
+      }
+      sum += digit
+    }
+
+    // הסכום חייב להתחלק ב-10
+    return sum % 10 === 0
+  }
 
   useEffect(() => {
     setIsVisible(true)
@@ -149,11 +183,22 @@ export default function Step7Results() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
     // Validation: צריך גם ת.ז וגם תאריך הנפקה
     if (!formData.idNumber || !formData.idIssueDate) {
-      alert('אנא הזן ת.ז ותאריך הנפקה')
+      setIdError('אנא הזן ת.ז ותאריך הנפקה')
       return
     }
+
+    // בדיקת תקינות ת.ז
+    if (!validateIsraeliID(formData.idNumber)) {
+      setIdError('תעודת זהות לא תקינה. אנא בדוק את המספר שהזנת')
+      return
+    }
+
+    // איפוס שגיאות
+    setIdError('')
+    
     // כאן תהיה שליחה לשרת
     console.log('Form submitted:', formData)
     setIsSubmitted(true)
@@ -402,15 +447,39 @@ export default function Step7Results() {
                       ת.ז
                     </label>
                     <input
-                      className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm py-2.5 px-4"
+                      className={`w-full rounded-lg border ${
+                        idError && formData.idNumber
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                          : 'border-slate-300 dark:border-slate-600 focus:border-primary focus:ring-primary/20'
+                      } dark:bg-slate-700 dark:text-white focus:ring-2 text-sm py-2.5 px-4`}
                       id="idNumber"
-                      placeholder="תעודת זהות"
+                      placeholder="תעודת זהות (9 ספרות)"
                       type="text"
                       maxLength={9}
                       value={formData.idNumber}
-                      onChange={(e) => setFormData({ ...formData, idNumber: e.target.value.replace(/\D/g, '') })}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '')
+                        setFormData({ ...formData, idNumber: value })
+                        // איפוס שגיאה בזמן הקלדה
+                        if (idError) setIdError('')
+                      }}
+                      onBlur={() => {
+                        // בדיקת ולידציה כשעוזבים את השדה
+                        if (formData.idNumber && formData.idNumber.length === 9) {
+                          if (!validateIsraeliID(formData.idNumber)) {
+                            setIdError('תעודת זהות לא תקינה')
+                          }
+                        } else if (formData.idNumber && formData.idNumber.length > 0) {
+                          setIdError('תעודת זהות חייבת להכיל 9 ספרות')
+                        }
+                      }}
                       required
                     />
+                    {idError && (
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                        {idError}
+                      </p>
+                    )}
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

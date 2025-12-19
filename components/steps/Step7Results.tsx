@@ -39,14 +39,20 @@ export default function Step7Results() {
   const { data } = useLeadStore()
   const [isVisible, setIsVisible] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [idError, setIdError] = useState('')
+  const [nameError, setNameError] = useState('')
   const [emailError, setEmailError] = useState('')
+  const [phoneError, setPhoneError] = useState('')
+  const [idError, setIdError] = useState('')
+  const [termsError, setTermsError] = useState('')
+  const [pensionClearinghouseError, setPensionClearinghouseError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     idNumber: '',
     idIssueDate: '',
+    termsAccepted: false,
+    pensionClearinghouseContact: false,
   })
 
   // פונקציית ולידציה לתעודת זהות ישראלית
@@ -68,6 +74,17 @@ export default function Step7Results() {
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/
     return emailRegex.test(email) && email.length <= 254
+  }
+
+  // פונקציית ולידציה לשם
+  const validateName = (name: string): boolean => {
+    return name.trim().length >= 2
+  }
+
+  // פונקציית ולידציה לטלפון ישראלי
+  const validatePhone = (phone: string): boolean => {
+    const cleanPhone = phone.replace(/\D/g, '')
+    return cleanPhone.length === 10 && /^0[2-9]\d{8}$/.test(cleanPhone)
   }
 
   useEffect(() => {
@@ -104,17 +121,47 @@ export default function Step7Results() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIdError('')
+    setNameError('')
     setEmailError('')
+    setPhoneError('')
+    setIdError('')
+    setTermsError('')
+    setPensionClearinghouseError('')
     let hasError = false
     
+    // ולידציה לשם
+    if (!validateName(formData.name)) {
+      setNameError('נא להזין שם מלא (לפחות 2 תווים)')
+      hasError = true
+    }
+    
+    // ולידציה לאימייל
     if (!validateEmail(formData.email)) {
       setEmailError('כתובת המייל נראית לא תקינה, אנא בדקו שהזנתם אותה נכון (למשל name@example.com)')
       hasError = true
     }
     
+    // ולידציה לטלפון
+    if (!validatePhone(formData.phone)) {
+      setPhoneError('מספר הטלפון אינו תקין. נא להזין 10 ספרות (למשל 0501234567)')
+      hasError = true
+    }
+    
+    // ולידציה לתעודת זהות
     if (!validateIsraeliID(formData.idNumber)) {
       setIdError('מספר תעודת הזהות אינו תקין. וודאו שהזנתם 9 ספרות כולל ספרת ביקורת.')
+      hasError = true
+    }
+    
+    // ולידציה לאישור תנאי שימוש
+    if (!formData.termsAccepted) {
+      setTermsError('יש לאשר את תנאי השימוש כדי להמשיך')
+      hasError = true
+    }
+    
+    // ולידציה לאישור פניה למסלקה
+    if (!formData.pensionClearinghouseContact) {
+      setPensionClearinghouseError('יש לאשר את הפניה למסלקה הפנסיונית כדי להמשיך')
       hasError = true
     }
     
@@ -237,10 +284,12 @@ export default function Step7Results() {
                           <p className="text-3xl font-black text-slate-900">{retirementAge}</p>
                         </div>
                       </StatTooltip>
-                      <div className="p-6 bg-slate-50 rounded-2xl text-center">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">קצבה חודשית</p>
-                        <p className="text-3xl font-black text-slate-900">{formatCurrency(expectedMonthlyPension)}</p>
-                      </div>
+                      <StatTooltip text="קצבה חודשית צפויה בגיל פרישה, על סמך הנתונים הקיימים.">
+                        <div className="p-6 bg-slate-50 rounded-2xl text-center cursor-help transition-colors hover:bg-slate-100 group">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">קצבה חודשית</p>
+                          <p className="text-3xl font-black text-slate-900">{formatCurrency(expectedMonthlyPension)}</p>
+                        </div>
+                      </StatTooltip>
                     </div>
                   </div>
                 </motion.div>
@@ -268,42 +317,68 @@ export default function Step7Results() {
                       <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-3">
                           {[
-                            { id: 'name', label: 'שם מלא', type: 'text' },
-                            { id: 'email', label: 'כתובת אימייל', type: 'email' },
-                            { id: 'phone', label: 'מספר טלפון', type: 'text' },
-                            { id: 'idNumber', label: 'תעודת זהות (9 ספרות)', type: 'text' },
-                            { id: 'idIssueDate', label: 'תאריך הנפקה (DD/MM/YYYY)', type: 'text' }
+                            { id: 'name', label: 'שם מלא', type: 'text', placeholder: 'שם מלא' },
+                            { id: 'email', label: 'כתובת אימייל', type: 'email', placeholder: 'name@example.com' },
+                            { id: 'phone', label: 'מספר טלפון', type: 'tel', placeholder: '0501234567' },
+                            { id: 'idNumber', label: 'תעודת זהות', type: 'text', placeholder: '123456789' },
+                            { id: 'idIssueDate', label: 'תאריך הנפקה (אופציונלי)', type: 'text', placeholder: 'DD/MM/YYYY' }
                           ].map((field) => (
                             <div key={field.id} className="space-y-1">
                               <div className="relative">
                                 <input
                                   id={field.id}
                                   type={field.type}
-                                  placeholder={field.label}
-                                  aria-invalid={(field.id === 'email' && !!emailError) || (field.id === 'idNumber' && !!idError)}
+                                  placeholder={field.placeholder || field.label}
+                                  aria-invalid={
+                                    (field.id === 'name' && !!nameError) ||
+                                    (field.id === 'email' && !!emailError) ||
+                                    (field.id === 'phone' && !!phoneError) ||
+                                    (field.id === 'idNumber' && !!idError)
+                                  }
                                   aria-describedby={field.id + "-error"}
                                   className={`w-full bg-slate-50 border rounded-xl p-4 text-sm focus:ring-2 outline-none transition-all ${
-                                    (field.id === 'email' && emailError) || (field.id === 'idNumber' && idError) 
+                                    (field.id === 'name' && nameError) ||
+                                    (field.id === 'email' && emailError) ||
+                                    (field.id === 'phone' && phoneError) ||
+                                    (field.id === 'idNumber' && idError)
                                       ? 'border-red-300 focus:ring-red-100' 
                                       : 'border-slate-100 focus:ring-[#E7FE55]/30'
                                   }`}
                                   value={(formData as any)[field.id]}
                                   onChange={(e) => {
                                     let val = e.target.value
-                                    if (field.id === 'idNumber') val = val.replace(/\D/g, '').slice(0, 9)
+                                    
+                                    // פורמט לתעודת זהות - רק ספרות, עד 9
+                                    if (field.id === 'idNumber') {
+                                      val = val.replace(/\D/g, '').slice(0, 9)
+                                    }
+                                    
+                                    // פורמט לטלפון - רק ספרות, עד 10
+                                    if (field.id === 'phone') {
+                                      val = val.replace(/\D/g, '').slice(0, 10)
+                                    }
+                                    
+                                    // פורמט לתאריך הנפקה
                                     if (field.id === 'idIssueDate') {
                                       val = val.replace(/\D/g, '')
                                       if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2)
                                       if (val.length >= 5) val = val.slice(0, 5) + '/' + val.slice(5, 9)
                                     }
+                                    
                                     setFormData({...formData, [field.id]: val})
-                                    // Clear errors on change
+                                    
+                                    // ניקוי שגיאות בעת שינוי
+                                    if (field.id === 'name') setNameError('')
                                     if (field.id === 'email') setEmailError('')
+                                    if (field.id === 'phone') setPhoneError('')
                                     if (field.id === 'idNumber') setIdError('')
                                   }}
-                                  required
+                                  required={field.id !== 'idIssueDate'}
                                 />
-                                {((field.id === 'email' && emailError) || (field.id === 'idNumber' && idError)) && (
+                                {((field.id === 'name' && nameError) ||
+                                  (field.id === 'email' && emailError) ||
+                                  (field.id === 'phone' && phoneError) ||
+                                  (field.id === 'idNumber' && idError)) && (
                                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500">
                                     <span className="material-symbols-outlined text-sm">error</span>
                                   </div>
@@ -311,6 +386,18 @@ export default function Step7Results() {
                               </div>
                               
                               <AnimatePresence mode="wait">
+                                {field.id === 'name' && nameError && (
+                                  <motion.p
+                                    id="name-error"
+                                    role="alert"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
+                                  >
+                                    {nameError}
+                                  </motion.p>
+                                )}
                                 {field.id === 'email' && emailError && (
                                   <motion.p
                                     id="email-error"
@@ -321,6 +408,18 @@ export default function Step7Results() {
                                     className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
                                   >
                                     {emailError}
+                                  </motion.p>
+                                )}
+                                {field.id === 'phone' && phoneError && (
+                                  <motion.p
+                                    id="phone-error"
+                                    role="alert"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
+                                  >
+                                    {phoneError}
                                   </motion.p>
                                 )}
                                 {field.id === 'idNumber' && idError && (
@@ -338,6 +437,141 @@ export default function Step7Results() {
                               </AnimatePresence>
                             </div>
                           ))}
+                        </div>
+
+                        {/* Checkboxes */}
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <div className="relative">
+                              <label className="flex items-start gap-3 cursor-pointer group">
+                                <div className="relative flex-shrink-0 mt-0.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={formData.termsAccepted}
+                                    onChange={(e) => {
+                                      setFormData({...formData, termsAccepted: e.target.checked})
+                                      if (e.target.checked) setTermsError('')
+                                    }}
+                                    className={`w-5 h-5 rounded border-2 transition-all appearance-none focus:ring-2 focus:ring-[#E7FE55]/30 outline-none ${
+                                      termsError 
+                                        ? 'border-red-300' 
+                                        : 'border-slate-200 group-hover:border-slate-300'
+                                    } ${
+                                      formData.termsAccepted 
+                                        ? 'bg-[#E7FE55] border-[#E7FE55]' 
+                                        : 'bg-white'
+                                    }`}
+                                    required
+                                  />
+                                  {formData.termsAccepted && (
+                                    <motion.svg
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      className="absolute inset-0 w-5 h-5 pointer-events-none"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="#0d141b"
+                                      strokeWidth={3}
+                                    >
+                                      <motion.path
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </motion.svg>
+                                  )}
+                                </div>
+                                <span className={`text-sm flex-1 text-right ${
+                                  termsError ? 'text-red-500' : 'text-slate-700'
+                                }`}>
+                                  אני מאשר/ת את תנאי השימוש
+                                </span>
+                              </label>
+                            </div>
+                            <AnimatePresence mode="wait">
+                              {termsError && (
+                                <motion.p
+                                  id="terms-error"
+                                  role="alert"
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
+                                >
+                                  {termsError}
+                                </motion.p>
+                              )}
+                            </AnimatePresence>
+                          </div>
+
+                          <div className="space-y-1">
+                            <div className="relative">
+                              <label className="flex items-start gap-3 cursor-pointer group">
+                                <div className="relative flex-shrink-0 mt-0.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={formData.pensionClearinghouseContact}
+                                    onChange={(e) => {
+                                      setFormData({...formData, pensionClearinghouseContact: e.target.checked})
+                                      if (e.target.checked) setPensionClearinghouseError('')
+                                    }}
+                                    className={`w-5 h-5 rounded border-2 transition-all appearance-none focus:ring-2 focus:ring-[#E7FE55]/30 outline-none ${
+                                      pensionClearinghouseError 
+                                        ? 'border-red-300' 
+                                        : 'border-slate-200 group-hover:border-slate-300'
+                                    } ${
+                                      formData.pensionClearinghouseContact 
+                                        ? 'bg-[#E7FE55] border-[#E7FE55]' 
+                                        : 'bg-white'
+                                    }`}
+                                    required
+                                  />
+                                  {formData.pensionClearinghouseContact && (
+                                    <motion.svg
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      className="absolute inset-0 w-5 h-5 pointer-events-none"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="#0d141b"
+                                      strokeWidth={3}
+                                    >
+                                      <motion.path
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </motion.svg>
+                                  )}
+                                </div>
+                                <span className={`text-sm flex-1 text-right ${
+                                  pensionClearinghouseError ? 'text-red-500' : 'text-slate-700'
+                                }`}>
+                                  אני מאשר/ת פניה למסלקה הפנסיונית
+                                </span>
+                              </label>
+                            </div>
+                            <AnimatePresence mode="wait">
+                              {pensionClearinghouseError && (
+                                <motion.p
+                                  id="pensionClearinghouse-error"
+                                  role="alert"
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  className="text-[11px] font-bold text-red-500 flex items-center gap-1 mt-1 pr-1"
+                                >
+                                  {pensionClearinghouseError}
+                                </motion.p>
+                              )}
+                            </AnimatePresence>
+                          </div>
                         </div>
 
                         <motion.button

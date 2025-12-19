@@ -16,18 +16,18 @@ function StatTooltip({ text, children }: { text: string; children: React.ReactNo
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, x: 10, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 p-4 bg-[#0d141b] text-white text-[11px] leading-relaxed rounded-2xl shadow-2xl z-50 text-right border border-white/10 backdrop-blur-md"
+            className="absolute top-1/2 -translate-y-1/2 left-full ml-4 w-72 p-4 bg-[#0d141b] text-white text-[11px] leading-relaxed rounded-2xl shadow-2xl z-50 text-right border border-white/10 backdrop-blur-md"
           >
             <div className="relative z-10 font-medium">
               <span className="text-[#E7FE55] font-black block mb-1">מידע חשוב:</span>
               {text}
             </div>
-            {/* Triangle Arrow */}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-x-[8px] border-x-transparent border-t-[8px] border-t-[#0d141b]"></div>
+            {/* Triangle Arrow pointing right */}
+            <div className="absolute top-1/2 -translate-y-1/2 right-full mr-[-8px] border-y-[8px] border-y-transparent border-l-[8px] border-l-[#0d141b]"></div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,13 +1,18 @@
 -- Create leads table for retirement planning leads
 CREATE TABLE IF NOT EXISTS leads (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  current_age INTEGER,
-  retirement_age INTEGER,
+  current_age INTEGER NOT NULL,
+  retirement_age INTEGER NOT NULL,
   monthly_income NUMERIC,
   monthly_expenses NUMERIC,
-  email TEXT,
-  phone TEXT,
-  name TEXT,
+  current_savings NUMERIC,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  name TEXT NOT NULL,
+  id_number TEXT NOT NULL,
+  id_issue_date TEXT,
+  terms_accepted BOOLEAN NOT NULL DEFAULT false,
+  pension_clearinghouse_contact BOOLEAN NOT NULL DEFAULT false,
   simulation_result JSONB,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -20,17 +25,27 @@ CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
 -- Enable Row Level Security
 ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 
--- Create policy for inserting leads (public can insert)
--- This allows the frontend to insert leads securely
+-- Create policy for inserting leads (public can insert with validation)
+-- This allows the frontend to insert leads securely with required fields
 CREATE POLICY "Allow public insert" ON leads
   FOR INSERT
   TO anon
-  WITH CHECK (true);
+  WITH CHECK (
+    current_age IS NOT NULL AND
+    retirement_age IS NOT NULL AND
+    email IS NOT NULL AND
+    phone IS NOT NULL AND
+    name IS NOT NULL AND
+    id_number IS NOT NULL AND
+    terms_accepted = true AND
+    pension_clearinghouse_contact = true
+  );
 
--- Create policy for authenticated users to read their own leads
-CREATE POLICY "Users can read own leads" ON leads
+-- Create policy for authenticated admin users to read all leads
+-- Only service_role can read (for admin dashboard)
+CREATE POLICY "Admin can read all leads" ON leads
   FOR SELECT
-  TO authenticated
+  TO service_role
   USING (true);
 
 -- Create policy for service role (full access for admin operations)

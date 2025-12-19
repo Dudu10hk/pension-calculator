@@ -9,6 +9,10 @@ export interface LeadData {
   email?: string
   phone?: string
   name?: string
+  idNumber?: string
+  idIssueDate?: string
+  termsAccepted?: boolean
+  pensionClearinghouseContact?: boolean
 }
 
 interface LeadStore {

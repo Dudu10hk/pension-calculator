@@ -119,7 +119,7 @@ export default function Step7Results() {
     }).format(amount)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setNameError('')
     setEmailError('')
@@ -166,8 +166,47 @@ export default function Step7Results() {
     }
     
     if (!hasError) {
-      setIsSubmitted(true)
-      useLeadStore.getState().updateData(formData)
+      // Prepare all data for submission
+      const submissionData = {
+        ...formData,
+        currentAge: data.currentAge,
+        retirementAge: data.retirementAge,
+        monthlyIncome: data.monthlyIncome,
+        monthlyExpenses: data.monthlyExpenses,
+        currentSavings: data.currentSavings,
+        simulationResult: {
+          confidenceScore,
+          expectedMonthlyPension,
+          expectedCapital,
+          isOnTrack,
+          targetMonthlyPension,
+        },
+      }
+
+      // Submit to API
+      try {
+        const response = await fetch('/api/leads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+          console.error('Submission error:', result.error)
+          alert(`שגיאה בשליחת הטופס: ${result.error || 'שגיאה לא ידועה'}`)
+          return
+        }
+
+        setIsSubmitted(true)
+        useLeadStore.getState().setData({ ...formData })
+      } catch (error) {
+        console.error('Network error:', error)
+        alert('שגיאה בחיבור לשרת. אנא נסה שוב.')
+      }
     }
   }
 

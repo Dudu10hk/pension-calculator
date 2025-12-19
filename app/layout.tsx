@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Footer from '@/components/Footer'
 
 // Removed Manrope font import to avoid SSL certificate issues
 // Using system fonts instead
@@ -22,7 +23,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-display">{children}</body>
+      <body className="font-display flex flex-col min-h-screen">
+        {children}
+        <Footer />
+      </body>
     </html>
   )
 }

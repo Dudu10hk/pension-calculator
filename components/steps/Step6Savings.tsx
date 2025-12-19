@@ -79,7 +79,7 @@ export default function Step6Savings() {
                         exit={{ opacity: 0, scale: 0.8 }}
                         className="flex items-center justify-center gap-4"
                       >
-                        <span className="text-6xl md:text-7xl font-black text-slate-900 tabular-nums leading-none">
+                        <span className="text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 tabular-nums leading-none">
                           {formatCurrency(savings)}
                         </span>
                         <span className="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">edit</span>
@@ -101,9 +101,9 @@ export default function Step6Savings() {
                             onChange={handleInputChange}
                             onBlur={() => setIsEditing(false)}
                             onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
-                            className="text-6xl md:text-7xl font-black text-slate-900 tabular-nums leading-none w-full max-w-[350px] text-center bg-slate-50 rounded-2xl border-2 border-primary/20 outline-none focus:border-primary/50 transition-all py-2"
+                            className="text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 tabular-nums leading-none w-full max-w-[280px] md:max-w-[350px] text-center bg-slate-50 rounded-2xl border-2 border-primary/20 outline-none focus:border-primary/50 transition-all py-2"
                           />
-                          <span className="mr-4 text-3xl font-black text-slate-400">₪</span>
+                          <span className="mr-4 text-2xl md:text-3xl font-black text-slate-400">₪</span>
                         </div>
                         <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs font-bold text-primary animate-pulse whitespace-nowrap">
                           <span className="material-symbols-outlined text-sm">check_circle</span>

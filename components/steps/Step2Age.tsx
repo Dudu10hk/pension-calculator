@@ -69,7 +69,7 @@ export default function Step2Age() {
                         exit={{ opacity: 0, scale: 0.8 }}
                         className="flex items-center justify-center gap-4"
                       >
-                        <span className="text-8xl font-black text-slate-900 tabular-nums leading-none">{age || 0}</span>
+                        <span className="text-7xl md:text-8xl font-black text-slate-900 tabular-nums leading-none">{age || 0}</span>
                         <div className="flex flex-col items-start">
                           <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold mb-2 transition-transform group-hover:scale-110">שנים</span>
                           <span className="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">edit</span>
@@ -90,7 +90,7 @@ export default function Step2Age() {
                           onChange={handleAgeInputChange}
                           onBlur={() => setIsEditing(false)}
                           onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
-                          className="text-8xl font-black text-slate-900 tabular-nums leading-none w-48 text-center bg-slate-50 rounded-2xl border-2 border-primary/20 outline-none focus:border-primary/50 transition-all"
+                          className="text-7xl md:text-8xl font-black text-slate-900 tabular-nums leading-none w-32 md:w-48 text-center bg-slate-50 rounded-2xl border-2 border-primary/20 outline-none focus:border-primary/50 transition-all"
                           min="1"
                           max="120"
                         />

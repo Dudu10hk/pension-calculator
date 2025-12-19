@@ -204,7 +204,7 @@ export default function Step7Results() {
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 הסימולציה הושלמה
               </div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900">
                 התוכנית שלך ל<span className="text-primary">פרישה בטוחה</span>
               </h1>
             </motion.div>
@@ -219,7 +219,7 @@ export default function Step7Results() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className="p-10 space-y-10">
+                  <div className="p-6 md:p-10 space-y-10">
                     {/* FIXED Pie Chart Container */}
                     <div className="relative flex flex-col items-center py-4">
                       <div className="w-64 h-64 flex items-center justify-center relative">
@@ -255,7 +255,7 @@ export default function Step7Results() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 1.2 }}
                           >
-                            <span className="block text-5xl font-black text-slate-900 tabular-nums tracking-tighter">
+                            <span className="block text-4xl md:text-5xl font-black text-slate-900 tabular-nums tracking-tighter">
                               {confidenceScore}%
                             </span>
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] block mt-1 mr-1">
@@ -277,17 +277,17 @@ export default function Step7Results() {
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-6 pt-6 border-t border-slate-50">
+                    <div className="grid grid-cols-2 gap-4 md:gap-6 pt-6 border-t border-slate-50">
                       <StatTooltip text="גיל הפרישה בישראל הוא 67 לגברים ו־65 לנשים. גם אם בוחרים לפרוש מוקדם יותר, נכון לבסס יציבות כלכלית מבלי למשוך את כספי הפנסיה.">
-                        <div className="p-6 bg-slate-50 rounded-2xl text-center cursor-help transition-colors hover:bg-slate-100 group">
+                        <div className="p-4 md:p-6 bg-slate-50 rounded-2xl text-center cursor-help transition-colors hover:bg-slate-100 group">
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">גיל פרישה</p>
-                          <p className="text-3xl font-black text-slate-900">{retirementAge}</p>
+                          <p className="text-2xl md:text-3xl font-black text-slate-900">{retirementAge}</p>
                         </div>
                       </StatTooltip>
                       <StatTooltip text="קצבה חודשית צפויה בגיל פרישה, על סמך הנתונים הקיימים.">
-                        <div className="p-6 bg-slate-50 rounded-2xl text-center cursor-help transition-colors hover:bg-slate-100 group">
+                        <div className="p-4 md:p-6 bg-slate-50 rounded-2xl text-center cursor-help transition-colors hover:bg-slate-100 group">
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">קצבה חודשית</p>
-                          <p className="text-3xl font-black text-slate-900">{formatCurrency(expectedMonthlyPension)}</p>
+                          <p className="text-2xl md:text-3xl font-black text-slate-900">{formatCurrency(expectedMonthlyPension)}</p>
                         </div>
                       </StatTooltip>
                     </div>

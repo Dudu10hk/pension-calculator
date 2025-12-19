@@ -70,7 +70,7 @@ export default function Step4FinancialBalance() {
                 <div className="absolute top-0 right-0 w-48 h-48 bg-[#E7FE55] rounded-full blur-[100px] opacity-10 -mr-24 -mt-24 transition-opacity group-hover:opacity-20"></div>
                 <div className="relative z-10 flex flex-col items-center">
                   <p className="text-[10px] font-black text-[#E7FE55] uppercase tracking-[0.25em] mb-2 opacity-80">תזרים חודשי פנוי</p>
-                  <span className="text-6xl font-black tabular-nums text-white tracking-tighter">
+                  <span className="text-5xl md:text-6xl font-black tabular-nums text-white tracking-tighter">
                     {formatCurrency(disposableIncome)}
                   </span>
                   <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
@@ -111,7 +111,7 @@ export default function Step4FinancialBalance() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                           >
-                            <span className="text-3xl font-black text-slate-900 tracking-tight group-hover:text-primary transition-colors">
+                            <span className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight group-hover:text-primary transition-colors">
                               {formatCurrency(income)}
                             </span>
                             <span className="material-symbols-outlined text-slate-300 group-hover:text-primary text-sm">edit</span>
@@ -173,7 +173,7 @@ export default function Step4FinancialBalance() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                           >
-                            <span className="text-3xl font-black text-slate-900 tracking-tight group-hover:text-indigo-500 transition-colors">
+                            <span className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight group-hover:text-indigo-500 transition-colors">
                               {formatCurrency(expenses)}
                             </span>
                             <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 text-sm">edit</span>

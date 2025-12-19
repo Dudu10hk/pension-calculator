@@ -81,9 +81,8 @@ async function sendEmailWithSMTP(data: LeadData) {
 
   // Dynamic import for nodemailer (only if SMTP is configured)
   const nodemailer = await import('nodemailer')
-  const { default: createTransport } = nodemailer
   
-  const transporter = createTransport({
+  const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: parseInt(SMTP_PORT || '587'),
     secure: SMTP_PORT === '465',

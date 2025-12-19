@@ -65,7 +65,7 @@ export default function Step6Savings() {
               <div className="space-y-3">
                 <p className="text-[#E7FE55] bg-[#0d141b] inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mb-2">שלב 5 מתוך 6</p>
                 <h1 className="text-4xl font-black text-slate-900 tracking-tight">כמה חסכת עד היום?</h1>
-                <p className="text-slate-500 text-sm">סך כל החסכונות (פנסיה, קופות גמל, עו"ש והשקעות)</p>
+                <p className="text-slate-500 text-sm">סך כל החסכונות (פנסיה, קופות גמל, עו&ldquo;ש והשקעות)</p>
               </div>
 
               <div className="py-12 flex flex-col items-center gap-8">
@@ -141,7 +141,7 @@ export default function Step6Savings() {
                   <p className="text-xs font-bold text-slate-900">למה זה חשוב?</p>
                 </div>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  החיסכון הנוכחי שלך הוא "גלגל התנופה" של התוכנית. ככל שהתחלת עם סכום גבוה יותר, הכוח של הריבית דריבית עובד חזק יותר עבורך.
+                  החיסכון הנוכחי שלך הוא &ldquo;גלגל התנופה&rdquo; של התוכנית. ככל שהתחלת עם סכום גבוה יותר, הכוח של הריבית דריבית עובד חזק יותר עבורך.
                 </p>
               </div>
 

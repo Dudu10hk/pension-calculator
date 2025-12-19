@@ -99,11 +99,34 @@ export default function Step7Results() {
   const currentSavings = data.currentSavings || 100000
   const yearsToRetirement = Math.max(1, retirementAge - currentAge)
   
-  // לוגיקת חישוב
-  const targetMonthlyPension = monthlyExpenses * Math.pow(1.03, yearsToRetirement)
-  const expectedCapital = (currentSavings * Math.pow(1.06, yearsToRetirement)) + 
-    ((monthlyIncome - monthlyExpenses) * ((Math.pow(1 + 0.06/12, yearsToRetirement * 12) - 1) / (0.06/12)))
-  const expectedMonthlyPension = (expectedCapital * 0.04) / 12
+  // קבועים לחישוב
+  const ANNUAL_RETURN = 0.05 // תשואה שנתית ריאלית 5%
+  const MONTHLY_RETURN = ANNUAL_RETURN / 12
+  const INFLATION_RATE = 0.025 // אינפלציה שנתית 2.5%
+  const WITHDRAWAL_RATE = 0.04 // שיעור משיכה שנתי 4% (כלל 4%)
+  const LIFE_EXPECTANCY = 90 // תוחלת חיים
+  
+  // חישוב חיסכון חודשי
+  const monthlySavings = Math.max(0, monthlyIncome - monthlyExpenses)
+  
+  // חישוב הון צפוי בפרישה
+  // 1. ערך עתידי של חיסכון קיים
+  const futureValueOfCurrentSavings = currentSavings * Math.pow(1 + ANNUAL_RETURN, yearsToRetirement)
+  
+  // 2. ערך עתידי של חיסכון חודשי (FV של אנונה רגילה)
+  const futureValueOfMonthlySavings = monthlySavings * 
+    ((Math.pow(1 + MONTHLY_RETURN, yearsToRetirement * 12) - 1) / MONTHLY_RETURN)
+  
+  // סך הכל הון צפוי
+  const expectedCapital = futureValueOfCurrentSavings + futureValueOfMonthlySavings
+  
+  // חישוב קצבה חודשית צפויה (כלל 4% - 4% מההון בשנה, מחולק ל-12 חודשים)
+  const expectedMonthlyPension = (expectedCapital * WITHDRAWAL_RATE) / 12
+  
+  // חישוב הוצאות חודשיות צפויות בפרישה (מותאם לאינפלציה)
+  const targetMonthlyPension = monthlyExpenses * Math.pow(1 + INFLATION_RATE, yearsToRetirement)
+  
+  // האם המסלול בטוח
   const isOnTrack = expectedMonthlyPension >= targetMonthlyPension
 
   // אחוז ביטחון פנסיוני (לשימוש בגרף)

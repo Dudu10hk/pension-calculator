@@ -58,153 +58,180 @@ export default function Step4FinancialBalance() {
               <div className="bg-[#E7FE55] h-full w-[50%] transition-all duration-500"></div>
             </div>
 
-            <div className="space-y-10 text-center">
+            <div className="space-y-8 text-center">
               <div className="space-y-2">
                 <p className="text-[#E7FE55] bg-[#0d141b] inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mb-2">שלב 3 מתוך 6</p>
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight">המאזן החודשי שלך</h1>
-                <p className="text-slate-500 text-sm">הבסיס לחיסכון הוא הפער בין ההכנסה להוצאה</p>
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">מה המצב הכלכלי שלך?</h1>
+                <p className="text-slate-500 text-sm">נתחיל מההכנסה וההוצאות החודשיות</p>
               </div>
 
-              {/* Enhanced Dynamic Balance Card */}
-              <div className="bg-[#0d141b] rounded-[24px] p-8 text-white relative overflow-hidden group shadow-2xl border border-white/5">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-[#E7FE55] rounded-full blur-[100px] opacity-10 -mr-24 -mt-24 transition-opacity group-hover:opacity-20"></div>
-                <div className="relative z-10 flex flex-col items-center">
-                  <p className="text-[10px] font-black text-[#E7FE55] uppercase tracking-[0.25em] mb-2 opacity-80">תזרים חודשי פנוי</p>
-                  <span className="text-5xl md:text-6xl font-black tabular-nums text-white tracking-tighter">
-                    {formatCurrency(disposableIncome)}
-                  </span>
-                  <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#E7FE55] animate-pulse"></span>
-                    <span className="text-[10px] font-bold text-slate-300">שיעור חיסכון: {savingsRate.toFixed(0)}%</span>
+              {/* Two Cards Side by Side - Softer Design */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 py-4">
+                {/* Income Card */}
+                <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-lg border border-slate-200">
+                  <div className="space-y-4">
+                    <div className="w-12 h-12 mx-auto bg-[#E7FE55]/20 rounded-full flex items-center justify-center">
+                      <span className="material-symbols-outlined text-2xl text-[#0d141b]">
+                        account_balance_wallet
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 mb-2">הכנסה חודשית נטו</p>
+                      <div 
+                        className="flex items-center justify-center gap-2 cursor-pointer group"
+                        onClick={() => setActiveEdit('income')}
+                      >
+                        <AnimatePresence mode="wait">
+                          {activeEdit === 'income' ? (
+                            <motion.input
+                              ref={inputRef}
+                              key="income-input"
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              type="text"
+                              inputMode="numeric"
+                              value={income.toLocaleString('he-IL')}
+                              onChange={(e) => setIncome(Number(e.target.value.replace(/\D/g, '')))}
+                              onBlur={() => setActiveEdit(null)}
+                              onKeyDown={(e) => e.key === 'Enter' && setActiveEdit(null)}
+                              className="w-40 bg-slate-50 border-2 border-[#E7FE55] rounded-xl py-2 px-3 text-2xl md:text-3xl font-bold text-[#0d141b] text-center outline-none"
+                            />
+                          ) : (
+                            <motion.div
+                              key="income-display"
+                              className="flex items-center gap-2"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                            >
+                              <p className="text-3xl md:text-4xl font-bold text-[#0d141b] tabular-nums">
+                                {formatCurrency(income)}
+                              </p>
+                              <span className="material-symbols-outlined text-slate-400 group-hover:text-[#E7FE55] text-lg transition-colors">
+                                edit
+                              </span>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                    <div className="relative h-2 flex items-center pt-2">
+                      <div className="absolute w-full h-2 bg-slate-100 rounded-full"></div>
+                      <input
+                        type="range"
+                        min="5000"
+                        max="100000"
+                        step="500"
+                        value={income}
+                        onChange={(e) => setIncome(parseInt(e.target.value))}
+                        className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer z-10"
+                        style={{ 
+                          WebkitAppearance: 'none',
+                          background: 'transparent'
+                        }}
+                      />
+                      <motion.div 
+                        className="absolute h-2 bg-[#E7FE55] rounded-full"
+                        animate={{ width: `${((income - 5000) / (100000 - 5000)) * 100}%` }}
+                        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expenses Card */}
+                <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-lg border border-slate-200">
+                  <div className="space-y-4">
+                    <div className="w-12 h-12 mx-auto bg-slate-100 rounded-full flex items-center justify-center">
+                      <span className="material-symbols-outlined text-2xl text-[#0d141b]">
+                        receipt_long
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 mb-2">הוצאות חודשיות</p>
+                      <div 
+                        className="flex items-center justify-center gap-2 cursor-pointer group"
+                        onClick={() => setActiveEdit('expenses')}
+                      >
+                        <AnimatePresence mode="wait">
+                          {activeEdit === 'expenses' ? (
+                            <motion.input
+                              ref={inputRef}
+                              key="expenses-input"
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              type="text"
+                              inputMode="numeric"
+                              value={expenses.toLocaleString('he-IL')}
+                              onChange={(e) => setExpenses(Number(e.target.value.replace(/\D/g, '')))}
+                              onBlur={() => setActiveEdit(null)}
+                              onKeyDown={(e) => e.key === 'Enter' && setActiveEdit(null)}
+                              className="w-40 bg-slate-50 border-2 border-slate-400 rounded-xl py-2 px-3 text-2xl md:text-3xl font-bold text-[#0d141b] text-center outline-none"
+                            />
+                          ) : (
+                            <motion.div
+                              key="expenses-display"
+                              className="flex items-center gap-2"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                            >
+                              <p className="text-3xl md:text-4xl font-bold text-[#0d141b] tabular-nums">
+                                {formatCurrency(expenses)}
+                              </p>
+                              <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 text-lg transition-colors">
+                                edit
+                              </span>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                    <div className="relative h-2 flex items-center pt-2">
+                      <div className="absolute w-full h-2 bg-slate-100 rounded-full"></div>
+                      <input
+                        type="range"
+                        min="2000"
+                        max="80000"
+                        step="500"
+                        value={expenses}
+                        onChange={(e) => setExpenses(parseInt(e.target.value))}
+                        className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer z-10"
+                        style={{ 
+                          WebkitAppearance: 'none',
+                          background: 'transparent'
+                        }}
+                      />
+                      <motion.div 
+                        className="absolute h-2 bg-slate-400 rounded-full"
+                        animate={{ width: `${((expenses - 2000) / (80000 - 2000)) * 100}%` }}
+                        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-12 py-6">
-                {/* Income Input - Highlighted */}
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center px-1">
-                    <div className="flex flex-col items-start">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1">הכנסה נטו</span>
-                      <span className="text-sm font-bold text-slate-900">משק בית</span>
-                    </div>
-                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveEdit('income')}>
-                      <AnimatePresence mode="wait">
-                        {activeEdit === 'income' ? (
-                          <motion.input
-                            ref={inputRef}
-                            key="income-input"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            type="text"
-                            inputMode="numeric"
-                            value={income.toLocaleString('he-IL')}
-                            onChange={(e) => setIncome(Number(e.target.value.replace(/\D/g, '')))}
-                            onBlur={() => setActiveEdit(null)}
-                            onKeyDown={(e) => e.key === 'Enter' && setActiveEdit(null)}
-                            className="w-32 bg-slate-50 border-2 border-[#E7FE55] rounded-xl py-2 px-3 text-xl font-black text-slate-900 text-center outline-none shadow-inner"
-                          />
-                        ) : (
-                          <motion.div 
-                            key="income-display"
-                            className="flex items-center gap-2"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                          >
-                            <span className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight group-hover:text-primary transition-colors">
-                              {formatCurrency(income)}
-                            </span>
-                            <span className="material-symbols-outlined text-slate-300 group-hover:text-primary text-sm">edit</span>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+              {/* Result Card - Softer */}
+              <motion.div 
+                className="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="text-center md:text-right">
+                    <p className="text-sm font-semibold text-slate-600 mb-2">חיסכון חודשי אפשרי</p>
+                    <p className="text-4xl md:text-5xl font-bold text-[#0d141b] tabular-nums">
+                      {formatCurrency(disposableIncome)}
+                    </p>
                   </div>
-                  <div className="relative h-4 flex items-center">
-                    <div className="absolute w-full h-2 bg-slate-100 rounded-full"></div>
-                    <input
-                      type="range"
-                      min="5000"
-                      max="100000"
-                      step="500"
-                      value={income}
-                      onChange={(e) => setIncome(parseInt(e.target.value))}
-                      className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer z-10 accent-[#E7FE55]"
-                      style={{ 
-                        WebkitAppearance: 'none',
-                        background: 'transparent'
-                      }}
-                    />
-                    <motion.div 
-                      className="absolute h-2 bg-[#E7FE55] rounded-full shadow-[0_0_15px_rgba(231,254,85,0.4)]"
-                      animate={{ width: `${((income - 5000) / (100000 - 5000)) * 100}%` }}
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    />
+                  <div className="flex items-center gap-3">
+                    <div className="text-center px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                      <p className="text-xs text-slate-500 mb-1 font-medium">שיעור חיסכון</p>
+                      <p className="text-2xl font-bold text-[#0d141b]">{savingsRate.toFixed(0)}%</p>
+                    </div>
                   </div>
                 </div>
-
-                {/* Expenses Input - Highlighted */}
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center px-1">
-                    <div className="flex flex-col items-start">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1">הוצאות ממוצעות</span>
-                      <span className="text-sm font-bold text-slate-900">מחיה שוטפת</span>
-                    </div>
-                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveEdit('expenses')}>
-                      <AnimatePresence mode="wait">
-                        {activeEdit === 'expenses' ? (
-                          <motion.input
-                            ref={inputRef}
-                            key="expenses-input"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            type="text"
-                            inputMode="numeric"
-                            value={expenses.toLocaleString('he-IL')}
-                            onChange={(e) => setExpenses(Number(e.target.value.replace(/\D/g, '')))}
-                            onBlur={() => setActiveEdit(null)}
-                            onKeyDown={(e) => e.key === 'Enter' && setActiveEdit(null)}
-                            className="w-32 bg-slate-50 border-2 border-indigo-500 rounded-xl py-2 px-3 text-xl font-black text-slate-900 text-center outline-none shadow-inner"
-                          />
-                        ) : (
-                          <motion.div 
-                            key="expenses-display"
-                            className="flex items-center gap-2"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                          >
-                            <span className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight group-hover:text-indigo-500 transition-colors">
-                              {formatCurrency(expenses)}
-                            </span>
-                            <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 text-sm">edit</span>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                  <div className="relative h-4 flex items-center">
-                    <div className="absolute w-full h-2 bg-slate-100 rounded-full"></div>
-                    <input
-                      type="range"
-                      min="2000"
-                      max="80000"
-                      step="500"
-                      value={expenses}
-                      onChange={(e) => setExpenses(parseInt(e.target.value))}
-                      className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer z-10 accent-indigo-500"
-                      style={{ 
-                        WebkitAppearance: 'none',
-                        background: 'transparent'
-                      }}
-                    />
-                    <motion.div 
-                      className="absolute h-2 bg-indigo-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.3)]"
-                      animate={{ width: `${((expenses - 2000) / (80000 - 2000)) * 100}%` }}
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    />
-                  </div>
-                </div>
-              </div>
+              </motion.div>
 
               <motion.button
                 onClick={handleContinue}

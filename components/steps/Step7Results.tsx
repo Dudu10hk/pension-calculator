@@ -380,10 +380,10 @@ export default function Step7Results() {
                         <div className="space-y-3">
                           {[
                             { id: 'name', label: 'שם מלא', type: 'text', placeholder: 'שם מלא' },
-                            { id: 'email', label: 'כתובת אימייל', type: 'email', placeholder: 'name@example.com' },
-                            { id: 'phone', label: 'מספר טלפון', type: 'tel', placeholder: '0501234567' },
-                            { id: 'idNumber', label: 'תעודת זהות', type: 'text', placeholder: '123456789' },
-                            { id: 'idIssueDate', label: 'תאריך הנפקה (אופציונלי)', type: 'text', placeholder: 'DD/MM/YYYY' }
+                            { id: 'email', label: 'כתובת אימייל', type: 'email', placeholder: 'כתובת דוא״ל name@example.com' },
+                            { id: 'phone', label: 'מספר טלפון', type: 'tel', placeholder: 'טלפון נייד 0501234567' },
+                            { id: 'idNumber', label: 'תעודת זהות', type: 'text', placeholder: 'ת.ז 123456789' },
+                            { id: 'idIssueDate', label: 'תאריך הנפקה (אופציונלי)', type: 'text', placeholder: 'תאריך הנפקת ת.ז DD/MM/YYYY' }
                           ].map((field) => (
                             <div key={field.id} className="space-y-1">
                               <div className="relative">

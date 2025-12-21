@@ -137,8 +137,8 @@ export default function Home() {
               <div className="bg-white p-3 rounded-[48px] shadow-2xl shadow-slate-300 relative z-20 overflow-hidden border border-slate-100">
                 <div className="aspect-[4/3] rounded-[40px] overflow-hidden bg-slate-100">
                   <img 
-                    src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?auto=format&fit=crop&q=80&w=1000" 
-                    alt="Financial Planning" 
+                    src="https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=1000" 
+                    alt="Financial Planning Workspace" 
                     className="w-full h-full object-cover"
                   />
                 </div>
